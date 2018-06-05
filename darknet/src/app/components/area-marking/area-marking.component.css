@@ -1,0 +1,61 @@
+.background{
+    border: 1px solid #e7e7e7;
+    min-height: 60vh;
+    background-color: white;
+    padding:0%;
+    border-radius: 1%;
+    width:100%;
+    margin: 0 auto;
+}
+.container{
+    margin: 0 auto;
+    padding: 0;
+}
+.box-element{
+    padding: 0px;
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.box{
+    background-color: rgba(238, 239, 244, 1);
+    border: 1px solid rgb(189, 184, 184);
+}
+.btn-group button{
+    background-color: rgba(247, 248, 250, 1);/* Green background */
+    border: 1px solid rgba(208, 213, 219, 1); /* Green border */
+    color: rgb(4, 4, 4);
+    cursor: pointer;
+    padding: 8px 12px;
+}
+.btn-group button:hover {
+    background-color: #dddddd;
+}
+.ShapeSelected{
+    background-color:  rgb(119, 119, 119) !important;
+}
+.header{
+    padding-top:10px;
+    padding-bottom:10px;
+}
+.textHeadings{
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(53, 53, 53, 1);
+    padding-top: 7px;
+}
+.contentName{
+    font-size: 20px !important;
+    color: rgba(53, 53, 53, 1);
+    padding-left: 0;
+}
+.modal{
+    top: 20% !important;
+}
+.ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948;
+}
+.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442;
+}

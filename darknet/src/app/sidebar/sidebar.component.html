@@ -1,0 +1,80 @@
+<!-- <div class="sidebar-wrapper"> -->
+<div class="sidebar-wrapper">
+    <div class="logo">
+        <a routerLink="/layout/dashboard" class="simple-text">
+            <!-- <div class="logo-img">
+                <img src="../../assets/img/angular2-logo.png" alt="">
+            </div> -->
+            <div class="alignLogo">
+                <img src="../../assets/img/logo.png" alt=""> </div>
+            <!-- <label style="color: white;">S&S</label> -->
+        </a>
+    </div>
+
+
+ <nav class="sidebar" [ngClass]="{sidebarPushRight: isActive}">
+    <ul class="list-group" style="margin-top:10%;">
+        <a routerLink="dashboard" [routerLinkActive]="['router-link-active']" *ngIf="role === 'SuperAdmin' || role ===  'Admin' || role === 'User'" class="list-group-item sidebarmenu">
+           <img src='../../assets/img/logos/dashboard.png' style="margin-right:3%;"> Dashboard
+        </a>
+
+        <div class="nested-menu">
+            <a class="list-group-item sidebarmenu" (click)="addExpandClass('pages')"  *ngIf="role === 'SuperAdmin' || role ===  'Admin'" [routerLinkActive]="['router-link-active']">
+                 <span>
+                        <img src='../../assets/img/logos/devicemanagement.png' style="margin-right:3%;"> Device Management
+                        <img src="../../assets/img/web/plus.png" alt="" class="plusAlign"> 
+                </span>
+            </a>
+            <li class="nested sidebarmenu" [class.expand]="showMenu === 'pages'">
+                <ul class="submenu list-group" style="margin-left:20%;">
+                    <li>
+                        <a routerLink="/layout/devices/Cameras" class="list-group-item sidebarmenu" [routerLinkActive]="['router-link-active']">
+                            <span class="inlistmenu " >Cameras</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a  routerLink="/layout/devices/aggregators" class="list-group-item sidebarmenu" [routerLinkActive]="['router-link-active']">
+                            <span class="inlistmenu" >Aggregators</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/layout/devices/computeEngines" class="list-group-item sidebarmenu" [routerLinkActive]="['router-link-active']">
+                            <span class="inlistmenu" >Compute Engine</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </div>
+
+        <a routerLink="floorMap" [routerLinkActive]="['router-link-active']" *ngIf="role === 'SuperAdmin' || role ===  'Admin'" class="list-group-item sidebarmenu">
+             <img src='../../assets/img/logos/floorplan.png' style="margin-right:3%;"> Floor Map
+        </a>
+
+        <a routerLink="facedetection" [routerLinkActive]="['router-link-active']" *ngIf="role === 'SuperAdmin' || role ===  'Admin'" class="list-group-item sidebarmenu">
+          <img src='../../assets/img/logos/facedetection.png'  style="margin-right:3%;"> Face Recognition
+        </a>
+
+        <a routerLink="videoIndexing" [routerLinkActive]="['router-link-active']" *ngIf="role === 'SuperAdmin' || role ===  'Admin'" class="list-group-item sidebarmenu">
+          <img src='../../assets/img/logos/videoindexer.png' style="margin-right:3%;"> Video Indexer
+        </a>
+
+        <a routerLink="userManagement" [routerLinkActive]="['router-link-active']" *ngIf="role === 'SuperAdmin'" class="list-group-item sidebarmenu">
+           <img src='../../assets/img/logos/usermanagement.png' style="margin-right:3%;"> User Management
+        </a>        
+
+        <a routerLink="reports" [routerLinkActive]="['router-link-active']" *ngIf="role === 'SuperAdmin' || role ===  'Admin' || role === 'User'" class="list-group-item sidebarmenu">
+           <img src='../../assets/img/logos/reports.png' style="margin-right:3%;"> Reports
+        </a>    
+    </ul>
+</nav> 
+
+
+</div>
+<!-- </div>  -->
+
+
+
+
+
+
+

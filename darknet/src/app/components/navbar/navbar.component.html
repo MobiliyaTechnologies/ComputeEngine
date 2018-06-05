@@ -1,0 +1,55 @@
+<div class="board-inner" id="status-buttons" *ngIf="!hideCameraMapping">
+    <ul class="nav nav-tabs" id="myTab">
+        <li class="boxItem">
+            <a uiSrefActive="active" uiSref="addcamera" data-toggle="tab" title="addcamera">
+                <span class="round-tabs one">
+                    <img src='{{src1}}'>
+                </span>
+            </a>
+            <p class="wizardText">Connect-camera</p>
+        </li>
+        <li class="boxItem">
+            <a uiSrefActive="active" uiSref="cameramapping" data-toggle="tab" title="cameramapping">
+                <span class="round-tabs one">
+                        <img src='{{src2}}'>
+                </span> 
+            </a>
+            <p class="wizardText">Camera mapping</p>
+        </li>
+        <li class="boxItem">
+            <a uiSrefActive="active" uiSref="areamarking" data-toggle="tab" title="areamarking">
+                <span class="round-tabs one">
+                        <img src='{{src3}}'>
+                </span>
+            </a>
+            <p class="wizardText">Area marking</p>
+        </li> 
+    </ul>
+    <br>
+    <div class="clearfix"></div>
+</div>
+
+
+<div class="board-inner" id="status-buttons" *ngIf="hideCameraMapping">
+    <ul class="nav nav-tabs" id="myTab">
+        <li class="boxItem" style="float:left;">
+            <a uiSrefActive="active" uiSref="addcamera" data-toggle="tab" title="addcamera">
+                <span class="round-tabs one">
+                    <img src='{{src1}}'>
+                </span>
+            </a>
+            <p class="wizardText">Connect-camera</p>
+        </li>
+
+        <li class="boxItem" style="float:right;">
+            <a uiSrefActive="active" uiSref="areamarking" data-toggle="tab" title="areamarking">
+                <span class="round-tabs one">
+                        <img src='{{src3}}'>
+                </span>
+            </a>
+            <p class="wizardText">Area marking</p>
+        </li> 
+    </ul>
+    <br>
+    <div class="clearfix"></div>
+</div>

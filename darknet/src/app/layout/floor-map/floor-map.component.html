@@ -1,0 +1,224 @@
+<div class="container-fluid">
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+  <div class="row cameratext">
+    <div class="addcamera">
+      <h5>Floor plan</h5>
+    </div>
+    <div class="camerasDiv">
+      <button type="submit" class="btn btn-primary" id="addCamera" *ngIf="editMapFlag" (click)="addFloorMap()">
+                Add Floor Map
+            </button>
+    </div>
+  </div>
+  <div class="row background" *ngIf="!editMapFlag">
+    <div class="col-sm-12 noFloorPlan" *ngIf="!floorMapFlag">
+      <div class="row ">
+        <img class="logo" src='../../../assets/img/GIFS/cameramapping.gif'>
+      </div>
+      <br>
+      <div class="row nofloormaps">
+        No Floor Map to show
+      </div>
+      <br>
+      <div class="row uploadmap">
+        <a href="javascript:void(0)" (click)="file.click()">
+                Upload Floor Map
+        </a>
+        <input type="file" #file [multiple]="(maxFiles > 1)" (change)="onFileChange($event)" style="display:none" />
+      </div>
+      <div class="row error" *ngIf="errors.length > 0">
+        <ul>
+          <li *ngFor="let err of errors">{{err}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-12 floormaps" *ngIf="floorMapFlag">
+
+      <div class="row">
+        <div class="col-sm-8 col-sx-12">
+
+          <div class="row">
+            <div class="col-sm-4 col-xs-12">
+              <h5>Floor Map</h5>
+              <p><b>MAP NAME</b></p>
+              <input type="text" class="form-control listcam" id="mapName" placeholder="Enter map name" [(ngModel)]="mapName" name="mapName"
+                required>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-12">
+              <img class="floorMap" id="floorMapImage" [src]="domSanitizer.bypassSecurityTrustUrl(floormap)" [ngClass]="{ 'top-b': !edge?.top, 'bottom-b': !edge?.bottom, 'left-b': !edge?.left, 'right-b': !edge?.right }"
+                #myBounds>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-12">
+              <button type="submit" class="btn btn-primary submitButton" (click)="mapCamera()">Add</button>
+              <button type="submit" class="btn btn-primary" (click)="cancelMap()">Cancel</button>
+              <button type="submit" class="btn btn-primary" (click)="resetChanges()" *ngIf="resetChangesFlag">Reset changes</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 col-xs-12 no_select sidebarfloor">
+          <h6>Plot Camera</h6>
+          <div class="row">
+            <div class="col-sm-12">
+              <label class="text" for="rawImage">Group By</label>
+              <br>
+              <label><input type="radio" name="optradio" checked="checked" value="aggregator" (change)="onChangeRadio($event.target.value)">Aggregators</label>
+              <label><input type="radio" name="optradio" value="feature"(change)="onChangeRadio($event.target.value)">Feature</label>
+            </div>
+          </div>
+          <div class="row ">
+
+            <div class="inner-addon left-addon">
+              <i class="glyphicon glyphicon-search" style="padding:7px;"></i>
+              <input type="text" class="form-control" style="height: 30px;" placeholder="Search" (ngModelChange)="filterCameras($event)" [ngModel]="substring"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12" *ngFor="let cam of cameras">
+              <p>{{cam.filter}}</p>
+              <div class="col-sm-12 " *ngFor="let cam1 of cam.cameras">
+                <div class="row" [ngClass]="cam1.isPlotted === 1 ? 'cameraListgreen' : 'cameraList' ">
+                  <div class="col-sm-8 col-xs-8 overflow-text" style="padding:0%;">
+                    <a class="listContent btn-link center" (click)="getRawImage(cam1)" data-toggle="modal" data-target="#myModal">{{cam1.deviceName}}</a>
+                  </div>
+                  <div class="col-sm-2 col-xs-2" id="{{cam1.camId}}displayDiv" style="padding:0%;">
+                    <span [ngDraggable]="draggable" (edge)="checkEdge($event)" [bounds]="myBounds" [inBounds]="inBounds" id="{{cam1.camId}}"
+                      (click)="rotate(cam1)" (started)="onDragBegin($event)" (stopped)="onDragEnd($event)" class="	glyphicon glyphicon-facetime-video"
+                      *ngIf="cam1.isPlotted === 0" style="z-index:10001;"></span>
+
+                    <span *ngIf="cam1.isPlotted === 1" id="{{cam1.camId}}">plotted</span>
+                  </div>
+                  <div class="col-sm-2 col-xs-2" style="padding:0%;">
+                    <!-- <span class="glyphicon glyphicon-remove-circle closetag" id="{{cam1.camId}}123" (click)="removeCam(cam1)"  style="font-size: 18px;"></span> -->
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row background" *ngIf="editMapFlag">
+
+    <div class="col-sm-12">
+      <div class="row">
+        <div class="col-sm-8 col-xs-12">
+          <div class="row">
+            <div class="col-sm-4 col-xs-12">
+              <br>
+              <div class="form-group">
+                <select id="floorname" data-style="btn-info" class="form-control listcam" [(ngModel)]="floorname" name="floorname" (change)="onMapChange($event.target.value)">
+                            <option value={{item._id}} *ngFor="let item of maps;">{{item.name}}</option>
+                        </select>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <br>
+          <div class="row">
+              <div class="col-sm-12">
+                <img class="floorMap" id="floorMapImage" [src]="domSanitizer.bypassSecurityTrustUrl(floormap)" [ngClass]="{ 'top-b': !edge?.top, 'bottom-b': !edge?.bottom, 'left-b': !edge?.left, 'right-b': !edge?.right }" #myBounds>
+                
+                <div *ngFor = "let item of plotCamera">
+                  <div  id="{{item.camId}}"   [style.top.%]="item.y"  (started)="onDragBegin($event)" [style.transform]="'rotate(' + item.rotationAngle + 'deg)'" (stopped)="onDragEnd($event)"  [style.left.%]="item.x" style="position:absolute;">
+                      
+                      <span   class="glyphicon glyphicon-remove-circle"  style="font-size: 18px;" (click)="camRemove(item)"></span>
+                      <span  id="{{item.camId}}" (click)="rotate(item)"  class="	glyphicon glyphicon-facetime-video"   ></span>
+                      
+                  </div>
+                  <div [style.top.%]="item.y-8" [style.left.%]="item.x" style="position:absolute;padding: 2px; background-color: rgba(0,0,0,0.7); color: rgba(255,255,255,1); border-radius: 3px;">
+                      {{item.deviceName}}
+                  </div>
+                 </div>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary submitButton" (click)="editCamera()" >Update</button>
+                <button type="submit" class="btn btn-primary" (click)="deleteMap()">Delete Map</button>
+                <button type="submit" class="btn btn-primary" (click)="resetChanges()" *ngIf="resetChangesFlag">Reset changes</button>
+              </div>
+            </div>
+        </div>
+
+        <!--  -->
+        <div class="col-sm-4 col-xs-12 sidebarfloor">
+            <h6>Plot Camera</h6>
+            <div class="row">
+              <div class="col-sm-12">
+                <label class="text" for="rawImage">Group By</label>
+                <br>
+                <label><input type="radio" name="optradio" checked="checked" value="aggregator" (change)="onChangeRadio($event.target.value)">Aggregators</label>
+                <label><input type="radio" name="optradio" value="feature"(change)="onChangeRadio($event.target.value)">Feature</label>
+              </div>
+            </div>
+            <div class="row ">
+               
+                <div class="inner-addon left-addon">
+                  <i class="glyphicon glyphicon-search" style="padding:7px;"></i>
+                  <input type="text" class="form-control"  style="height: 30px;" placeholder="Search" (ngModelChange)="filterCameras($event)" [ngModel]="substring"/>
+                </div>
+            </div>
+            <div class="row " >
+                <div class="col-sm-12" *ngFor="let cam of cameras">
+                  <p>{{cam.filter}}</p>
+                  <div class="col-sm-12"   *ngFor="let cam1 of cam.cameras" >
+                     <div class="row" [ngClass]="cam1.isPlotted === 1 ? 'cameraListgreen' : 'cameraList' ">
+                      <div class="col-sm-8 col-xs-6  overflow-text" style="padding:0%;">
+                          <a class="listContent btn-link center"  (click)="getRawImage(cam1)" data-toggle="modal" data-target="#myModal">{{cam1.deviceName}}</a>
+                      </div>
+                      
+                      <div class="col-sm-2 col-xs-4 " id="{{cam1.camId}}displayDiv" style="padding:0%;">
+                          
+                          <span [ngDraggable]="draggable" (edge)="checkEdge($event)" [bounds]="myBounds" [inBounds]="inBounds" id="{{cam1.camId}}" (click)="rotate(cam1)" (started)="onDragBegin($event)" (stopped)="onDragEnd($event)" class="glyphicon glyphicon-facetime-video"  *ngIf="cam1.isPlotted === 0" style="z-index:10001;"></span>
+                          
+                          <span *ngIf="cam1.isPlotted === 1" id="{{cam1.camId}}">plotted</span>
+                      </div>
+                      <div class="col-sm-2 col-xs-2" style="padding:0%;">
+                         
+                          
+                      </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog" style="width: 40%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Camera Preview</h4>
+      </div>
+      <div class="modal-body" style="padding:2%;">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="image-div">
+              <img [src]="domSanitizer.bypassSecurityTrustUrl(thumbnail)" style="width:100%; height:250px;">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="text-align:left;">
+
+        <button type="submit" class="btn submitButton" size="8" data-dismiss="modal" data-toggle="modal" data-target="#myModal1">OK</button>
+      </div>
+    </div>
+  </div>
+</div>

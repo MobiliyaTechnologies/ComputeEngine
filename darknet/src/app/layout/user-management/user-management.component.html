@@ -1,0 +1,76 @@
+<div class="container-fluid">
+  <div class="row userText">
+    <div class="usermangement">
+      <h5>User Management</h5>
+    </div>
+    <div class="camerasDiv">
+      <!-- <button type="button" class="btn btn-default btn-sm" id="addCamera" (click)="addcamera()">
+                    Connect Camera
+        </button> -->
+    </div>
+  </div>
+  <div class="row background">
+    <table id='table1' class="table table-striped">
+      <thead>
+        <tr>
+          <th><b>User name</b></th>
+          <th><b>Email Id</b></th>
+          <th><b>Assigned Role</b></th>
+          <th><b>Action</b></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of userDetails" style="border:none;">
+          <td>
+            {{item.firstname + " "+ item.lastname}}
+          </td>
+          <td>
+            {{item.emailId}}
+          </td>
+          <td>
+            {{item.role}}
+          </td>
+          <td>
+            <a (click)="editUser(item)" data-toggle="modal" data-target="#myModal">
+                  <span class="glyphicon glyphicon-pencil"></span>
+              </a>
+            <!-- <a (click)="deleteUser(item)">
+                  <span class="glyphicon glyphicon-trash"></span>
+              </a> -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+</div>
+
+
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.7)">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Update role</h4>
+      </div>
+      <div class="modal-body" style="padding:1%;">
+        <form class="form" id="myForm">
+          <br>
+          <div class="form-group">
+            <label class="text" for="updaterole">Role</label>
+            <select id="updaterole" data-style="btn-info" class="form-control updaterole" [(ngModel)]="role" name="updaterole">
+                <option value="Admin" selected>Admin</option>
+                <option value="User" selected>User</option>
+            </select>
+          </div>
+        </form>
+        <div class="modal-footer">
+          <div class="row">
+            <button type="submit" class="btn submitButton" (click)="updateUser()" size="8" data-dismiss="modal" data-toggle="modal"
+              data-target="#myModal">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,248 @@
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="col-md-12 col-sm-12" class="liveCameras" (click)="role != 'User' ? displayliveCameras(): false">
+                    <div class="card">
+                        <div class="header">
+                            <div class="row">
+                                <div class="col-sm-1 col-xs-2">
+                                    <img src="../../../assets/img/GIFS/livecamera.gif">
+                                </div>
+                                <div class="col-sm-8 col-xs-8">
+                                    <span class="title"><b>{{cameraLength}}</b> Live cameras </span>
+                                </div>
+                                <div class="col-sm-3 title2" *ngIf="!liveCameraList" >
+                                    <span >View Details<span class="glyphicon glyphicon-menu-right"></span></span> 
+                                </div>
+                                <div class="col-sm-3 title2" *ngIf="liveCameraList" >
+                                        <span >Dashboard<span class="glyphicon glyphicon-menu-right"></span></span> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content">
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+
+        <div class="row" *ngIf="liveCameraList">
+            <div class="col-sm-12 ">
+                <div class="col-sm-12 background">
+                    <br>
+                    <div class="col-sm-12">
+                        <div class="col-sm-4" style="float:right;">
+                            <select id="livecamfilter" data-style="btn-info" class="form-control" [(ngModel)]="livecamfilter" name="livecamfilter" (change)="filterLiveCameras($event.target.value)">
+                                <option *ngFor="let algo of liveFilterFeatures;" value={{algo.algo}}>{{algo.displayAlgo}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 scrollable">
+                        <br>
+                        <div class="col-sm-3" *ngFor="let cam of livecameras">
+                            <div class="card" (click)="playCam(cam)">
+                                <img class="card-img-top" [src]="domSanitizer.bypassSecurityTrustUrl(cam.imageBase64)" alt="Card image cap">
+                                <div class="abc">
+                                    <h6 class="card-title">{{cam.deviceName}}</h6>
+                                </div>
+                                <div class="middle">
+                                    <a>
+                                        <img  class="playLogo" src="../../../assets/img/logos/play.png">    
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-sm-3" *ngFor="let cam of cameras">
+                <div class="card">
+                    <img class="card-img-top" [src]="domSanitizer.bypassSecurityTrustUrl(cam.imageBase64)" alt="Card image cap">
+                    <div class="middle">
+                        <a (click)="playCam(cam._id, cam.deviceName, cam.aggregatorId, cam.computeEngineId)">
+                                      <span class="glyphicon glyphicon-play playButton"></span>
+                      </a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{cam.deviceName}}</h5>
+                        <br>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="row" *ngIf="!liveCameraList">
+            <div class="col-sm-4  col-xs-12">
+                <div class="card doughnut">
+                    <div class="col-sm-12">
+                        <br>
+                        <span class="labels">Total cameras: {{totalcameras}}</span>
+                        <br>
+                        <canvas #myChart style="height:40vh;width:100%;" *ngIf="isDisplayCanvas"></canvas>
+                        <div class="alignButton1">
+                            <button type="submit" class="btn btn-primary alignButton1" id="addCamera" (click)="addCamera()" *ngIf="!isDisplayCanvas && (role === 'SuperAdmin' || role ===  'Admin') "> Add Camera </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-8 col-xs-12">
+                    <div class="card barChart">
+                        <div class="col-sm-12">
+                            <br>
+                            <div class="col-sm-4">
+                                <span class="labels">Total detections: {{totalDetection}}</span>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form1">
+                                    <select id="barChartDate" class="form-control" [(ngModel)]="barChartDate" name="barChartDate" (change)="onChangeDate($event.target.value)">
+                                    <option value="0" selected>today</option>
+                                    <option value="1">yesterday</option>
+                                    <option value="7">last 7 days</option>
+                                    <option value="15">last 15 days</option>
+                                    <option value="30">last 30 days</option>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+        
+                                <div class="form1">
+                                    <select id="barFeatureName" data-style="btn-info" class="form-control" [(ngModel)]="barFeatureName" name="barFeatureName"
+                                        (change)="onChange($event.target.value)">
+                                    <option *ngFor="let algo of barFeatures;" value={{algo.algo}}>{{algo.displayAlgo}}</option>
+                                </select>
+                                </div>
+                            </div>
+        
+                            <br>
+                            
+                            <div class="col-sm-12" style=" height: 35vh;">
+                                    <!-- <canvas #myChart2 style="width: 100%; height: 100%;"></canvas> -->
+                                    <canvas #myChart1 style="height:30vh;width:100%;display:block;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    
+        <div class="row" *ngIf="!liveCameraList">
+            <div class="col-sm-12">
+                    <div class="card liveChart">
+                            <div class="col-sm-12">
+                                <br>
+                                <div class="col-sm-6">
+                                    <span class="labels">Current Occupancy</span>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form1" *ngIf="cameraliveflag">
+                                        <select id="marker" data-style="btn-info" class="form-control" [(ngModel)]="markercamfilter" name="marker" (change)="onChangelivefields($event.target.value)" >
+                                            <option value="camera">By camera</option>
+                                            <option value="marker">By marker</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div  *ngIf="cameraliveflag">
+                                            <angular2-multiselect
+                                            [data]="dropdownList" [(ngModel)]="selectedItems" 
+                                            [settings]="dropdownSettings" 
+                                            (onSelect)="onItemSelect($event)" 
+                                            (onDeSelect)="OnItemDeSelect($event)"
+                                            (onSelectAll)="onSelectAll($event)"
+                                            (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-sm-12" style=" height: 40vh;" *ngIf="cameraliveflag">
+                                        <canvas #myChart2 style="width: 100%; height: 100%;"></canvas>
+                                </div>
+                                <div class="col-sm-12" style="height:40vh; text-align: center;font-size: 16px;" *ngIf="!cameraliveflag">
+                                    <br>
+                                    <span>Currently No camera is online. Start streaming to see the current occupation.</span>
+                                </div>
+                                <!-- <canvas #myChart2 style="height:40vh;width:100%;"></canvas> -->
+                            </div>
+                        </div>
+            </div>
+        </div>
+    
+    
+    
+        <div class="row" *ngIf="!floorMapFlag && !liveCameraList && (role === 'SuperAdmin' || role ===  'Admin')">
+            <div class="col-sm-12  col-xs-12">
+                <div class="card floorMap">
+                    <div class="alignButton2">
+                        <button type="submit" class="btn btn-primary marginButton" id="addFloorMap" (click)="addFloorMap()"> Add Floor Map </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    
+        <div class="row" *ngIf="!liveCameraList">
+            <div class="col-sm-12  col-xs-12">
+                <div class="card floorMap" *ngIf="floorMapFlag">
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12">
+                            <br>
+                            <div class="col-sm-4 col-xs-12">
+                                <select id="mapname" data-style="btn-info" class="form-control" [(ngModel)]="mapname" name="mapname" (change)="onChangeMap($event.target.value)">
+                                      <option *ngFor="let names of maps;" value={{names.name}}>{{names.name}}</option>
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-7 col-xs-12">
+                            <div class="col-sm-12">
+                                <br>
+                                <img class="floorMapImage" id="floorMapImage" [src]="domSanitizer.bypassSecurityTrustUrl(floorMapImg)">
+                                <div *ngFor="let item of drawCams">
+                                    <span class="glyphicon glyphicon-facetime-video" id="tooltip" [style.top.%]="item.y" [style.left.%]="item.x" [style.transform]="'rotate(' + item.rotationAngle + 'deg)'" style="position:absolute;"></span>
+                                    <span [style.top.%]="item.y - 7" [style.left.%]="item.x-3" class="tooltiptext">{{item.deviceName}}</span>
+                                </div>
+    
+                            </div>
+                        </div>
+    
+                        <div class="col-sm-5 col-xs-12">
+                            <div class="col-sm-12">
+                                <br>
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="left" style="float:left;">
+                                                <h6>Total detections</h6>
+                                            </div>
+                                            <div class="right" style="float:right;">
+                                                <h6>{{totalCount}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngFor="let item of progressBarData">
+                                        <br>
+                                        <div class="col-sm-12">
+                                            <div class="left" style="float:left;">
+                                                {{item.deviceName}}
+                                            </div>
+                                            <div class="right" style="float:right;">
+                                                {{item.respCount}}
+                                            </div>
+                                            <br>
+                                            <div class="progressBar">
+                                                <div class="progressbar">
+                                                    <div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" [style.width.%]="item.count">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,179 @@
+.background{
+  border: 1px solid #e7e7e7;
+  min-height: 70vh;
+  background-color: white;
+  padding:0%;
+  border: none;
+  border-radius: 5px;
+  
+}
+.scrollable{
+  overflow-y: scroll;
+  height:60vh;
+}
+.middle {
+    /* transition: .5s ease; */
+    opacity: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .abc {
+   
+    opacity: 1;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    color: white;
+    /* transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%); */
+    text-align: center;
+  }
+  .card:hover .card-img-top {
+    opacity: 0.7;
+  }
+  .glyphicon-facetime-video{
+    font-size: 20px;
+    color:gray;
+}
+  /* .card:hover .middle {
+    opacity: 1;
+    cursor: pointer;
+  } */
+
+  .container-fluid:hover .liveCameras  {
+    cursor: pointer;
+    
+  }
+  .liveCameras:hover .card {
+    cursor: pointer;
+    /* background-color: rgb(66, 78, 112);
+   
+    transition: background-color 500ms linear; 
+     color:white; */
+  }
+  .liveCameras .title{
+    color:white;
+    font-size: 20px;
+  }
+  .title2{
+    text-align:right;
+    margin-top: 3px;
+  }
+  .liveCameras .title2 span{
+    color:white;
+    font-size: 16px;
+    color:rgba(43, 212, 123, 1);
+    /* float:right; */
+  }
+  .glyphicon-menu-right{
+    font-size: 12px !important;
+    margin-left: 2%;
+  }
+  /* .title2
+  {
+    font-size: 15px;
+    color:rgba(43, 212, 123, 1);
+    float:right;
+    margin-top: 5%;
+  } */
+
+  .tooltiptext{
+    position: absolute;
+    padding:2px;
+    background-color: rgba(0,0,0,0.7);
+    color: rgba(255,255,255,1);
+    border-radius: 3px;
+  }
+  .liveCameras .card{
+    background-color:rgba(65, 78, 162, 1);
+    
+  }
+  .playButton{
+    font-size: 30px;
+    color: #DD0330;
+
+  }
+  .card-img-top{
+    width:100%;
+    height:150px;
+  }
+  .playLogo:hover {
+    transform: scale(1.2); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+  }
+  .card-title{
+    text-align:center;
+  }
+
+  .doughnut{
+    height: 50vh;
+    background-color: white;
+    border-radius: 5px;
+   
+  }
+
+  .barChart{
+    height: 50vh;
+    background-color: white;
+    border-radius: 5px;
+    
+  }
+  .liveChart{
+    height: 55vh;
+    background-color: white;
+    border-radius: 5px;
+    
+  }
+  .floorMap{
+    height: 60vh;
+    background-color: white;
+    border-radius: 5px;
+    
+  }
+
+  .floorMap2{
+    height: 20vh;
+    background-color: white;
+    border-radius: 5px;
+    
+  }
+
+  .progressbar{
+    height:5px;
+    border:1px solid gray;
+    border-radius:1px;
+  }
+  .floorMapImage{
+    border: 1px solid gray;
+    height: 45vh;
+    width: 100%;
+  }
+
+  .labels{
+    font-family: 'Proxima Nova';
+    font-size: 20px;
+    font-weight: 300;
+    color: rgba(53, 53, 53, 1);
+  }
+  
+
+
+  .alignButton1
+{
+  text-align: center;
+  margin-top: 20%;
+}
+
+.alignButton2
+{
+  text-align: center;
+ 
+}
+
+.marginButton
+{
+  margin-top:6%;
+}

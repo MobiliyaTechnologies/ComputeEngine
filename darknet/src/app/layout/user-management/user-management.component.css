@@ -1,0 +1,23 @@
+.background{
+    border: 1px solid #e7e7e7;
+    min-height: 70vh;
+    background-color: white;
+    padding:0%;
+}
+.userText{
+    width: 100%;
+    display: inline-block;
+}
+.usermangement{
+    float:left;
+    color:white;
+}
+.tableData{
+    border:none;
+}
+.camerasDiv{
+    float:right;
+}
+a:hover{
+    cursor:pointer;
+}

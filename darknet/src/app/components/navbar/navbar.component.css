@@ -1,0 +1,19 @@
+.nav-tabs{
+    margin: 0 auto;
+    width: 60%;
+    border-bottom: none;
+}
+#status-buttons{
+    background-color: linear-gradient( rgb(55,63,128) , rgb(27,32,87)); 
+    border-radius: 10px;
+    margin-bottom: 1%;
+}
+.wizardText{
+    text-align:center;
+    color:white;
+}
+
+.board-inner
+{
+    margin-top:-2%;
+}

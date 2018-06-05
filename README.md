@@ -1,0 +1,1 @@
+Please refer README from darknet and jetsonNodeServer folder for their respective procedures.

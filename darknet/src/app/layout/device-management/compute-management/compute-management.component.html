@@ -1,0 +1,204 @@
+<div class="container-fluid ">
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+  <div class="row">
+    <div class="addComputeEngine">
+      <h5>Compute Engine</h5>
+    </div>
+    <div class="computeEnginesDiv">
+      <button type="button" class="btn btn-default btn-sm" id="addComputeEngine" (click)="navigateToAddComputeEngine()">
+        ADD COMPUTE ENGINE
+      </button>
+    </div>
+  </div>
+
+  <form class="form" id="myForm" #ComputeForm="ngForm">
+    <div class="row background" *ngIf="!isComputeEngine">
+      <div class="col-sm-12 cameraData">
+        <div class="col-sm-12">
+          <br>
+          <div class="row">
+            <div class="form-group">
+              <div class="col-sm-6 col-xs-12 overflow-text">
+                <p>
+                  <b>COMPUTE ENGINE NAME</b>
+                </p>
+                <input type="text" class="form-control " id="computeEngineName" [(ngModel)]="computeEngineName" name="computeEngineName"
+                  required>
+              </div>
+              <div class="col-sm-6 col-xs-12 overflow-text">
+                <p>
+                  <b>LOCATION</b>
+                </p>
+                <input type="text" class="form-control " id="computeEngineLocation" [(ngModel)]="computeEngineLocation" name="computeEngineLocation"
+                  required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="form-group">
+              <div class="col-sm-6 col-xs-12 overflow-text">
+                <p>
+                  <b>MAC ADDRESS</b>
+                </p>
+                <input type="text" class="form-control " id="computeEngineMacId" [(ngModel)]="computeEngineMacId" name="computeEngineMacId"
+                  required>
+              </div>
+              <div class="col-sm-6 col-xs-12 overflow-text">
+                <p>
+                  <b>IP ADDRESS</b>
+                </p>
+                <input type="text" class="form-control " id="computeEngineIpAddress" [(ngModel)]="computeEngineIpAddress" name="computeEngineIpAddress"
+                  required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="form-group">
+              <div class="col-sm-6 col-xs-12 overflow-text">
+                <p>
+                  <b>DEVICE TYPE</b>
+                </p>
+                <input type="text" class="form-control " id="computeEngineType" [(ngModel)]="computeEngineType" name="computeEngineType"
+                  required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-12 col-xs-12">
+              <button type="button" class="btn btn-default btn-sm" id="addComputeEngine" [disabled]="!ComputeForm.form.valid" (click)="addComputeEngine()">
+                SAVE
+              </button>
+              <button type="button" class="btn btn-default btn-sm" id="cancel" (click)="cancel()">
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="row background" *ngIf="isComputeEngine">
+    <div class="col-sm-4 computeEngineListSection">
+      <div class="row ">
+        <div class="inner-addon left-addon">
+          <i class="glyphicon glyphicon-search"></i>
+          <input type="text" class="form-control" placeholder="Search" (ngModelChange)="filterComputeEngines($event)" [ngModel]="substring"
+          />
+        </div>
+      </div>
+      <br>
+      <div class="row cameraList">
+        <div class="col-sm-12">
+          <div class="col-sm-12 computeEngineList items computelist overflow-text" *ngFor="let computeengine of computeengines let selIndex = index"
+            [ngClass]="(selectedIndex == selIndex)?'computelistClick':''" (click)="getComputeEngineDetails(computeengine, selIndex)">
+            <div class="col-sm-11 col-xs-8 listMargin">
+              <a class="listContent btn-link center">{{computeengine.deviceName}}</a>
+              <p class="grayColor">{{computeengine.location}}</p>
+            </div>
+            <div class="col-sm-1 col-xs-4 listMargin">
+              <span id="{{computeengine._id}}" *ngIf="computeengine.status === 2">
+                <img src="../../../../assets/img/logos/checkmark.png">
+              </span>
+              <span id="{{computeengine._id}}" *ngIf="computeengine.status === 1 || computeengine.status === 0">
+                <img src="../../../../assets/img/logos/alert.png">
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-8 cameraData">
+      <div class="col-sm-12" *ngIf="computeEngineDetails">
+        <br>
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>COMPUTE ENGINE NAME</b>
+            </p>
+            <span *ngIf='!isEdit'>{{computeEngineDetails.name}}</span>
+            <input *ngIf='isEdit' type="text" class="form-control " id="computeEngineName" [(ngModel)]="computeEngineDetails.name" name="computeEngineName"
+              required>
+          </div>
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>LOCATION</b>
+            </p>
+            <span *ngIf='!isEdit'>{{computeEngineDetails.location}}</span>
+            <input *ngIf='isEdit' type="text" class="form-control " id="computeEngineLocation" [(ngModel)]="computeEngineDetails.location"
+              name="computeEngineLocation" required>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>MAC ADDRESS</b>
+            </p>
+            <span>{{computeEngineDetails.macId}}</span>
+          </div>
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>IP ADDRESS</b>
+            </p>
+            <span>{{computeEngineDetails.ipAddress}}</span>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>DEVICE TYPE</b>
+            </p>
+            <span>{{computeEngineDetails.deviceType}}</span>
+          </div>
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>DETECTION ALGORITHM</b>
+            </p>
+            <span *ngFor="let algo of computeEngineDetails.detectionAlgorithms; let isLast=last">
+              {{algo.featureName}}{{isLast ? '' : ', '}}
+            </span>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>CAMERA SUPPORTED</b>
+            </p>
+            <span>{{computeEngineDetails.cameraSupported}}</span>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-12 col-xs-12">
+            <button type="button" class="btn btn-default btn-sm" id="editAggregator" (click)="navigateToupdateComputeEngine()" *ngIf='!isEdit'>
+              EDIT
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="saveAggregator" (click)="updateComputeEngine(computeEngineDetails)"
+              *ngIf='isEdit'>
+              SAVE
+            </button>
+
+            <button type="button" class="btn btn-default btn-sm" id="remove" (click)="removeComputeEngine(computeEngineDetails)" *ngIf='!isEdit && computeEngineDetails.status === 2'>
+              REMOVE
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="keep" (click)="whitelistComputeEngine(computeEngineDetails)" *ngIf='!isEdit && (computeEngineDetails.status === 0 || computeEngineDetails.status === 1)'>
+              KEEP
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="cancel" (click)="cancel()" *ngIf='isEdit'>
+              CANCEL
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="delete" (click)="deleteCompEngine(computeEngineDetails)">
+              DELETE
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

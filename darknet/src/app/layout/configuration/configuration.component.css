@@ -1,0 +1,12 @@
+.devicemenu{
+    border: 1px solid #e7e7e7;
+    min-height: 70vh;
+    background-color: white;
+    padding:0%;
+}
+.deviceul{
+    border: 0.5px solid #e7e7e7;
+}
+.nav-link{
+    border-bottom: none !important;
+}

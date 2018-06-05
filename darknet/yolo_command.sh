@@ -1,0 +1,1 @@
+./darknet detect "cfg/yolo.cfg yolo.weights 0.1 0.5" "http://10.9.42.211:5008/results" "/home/ubuntu/surveillance/jetson-dl/jetsonNodeServer/stopProcessingDetectnetDL" "2" "1 person 23 560 100 180 1 cam1 1 person 213 60 180 110 2 cam1" "600 564"

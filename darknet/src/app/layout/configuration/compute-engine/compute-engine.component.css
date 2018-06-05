@@ -1,0 +1,32 @@
+.cameraList{
+    padding:2%;
+}
+.cameralistdiv{
+    overflow-y: scroll;
+    height:20vh;
+}
+.cameratext{
+    padding:2%;
+    width: 100%;
+    display: inline-block;
+}
+.addcamera{
+    float:left;
+}
+.camerasDiv{
+    float:right;
+}
+.lawngreen{
+    margin-top: 1%;
+    padding-top:1%;
+    padding-bottom:1%;
+    padding-left: 2%;
+    border:1px solid #191919;
+    background-color:white;
+}
+.form{
+    margin: 0% 2%;
+}
+.listcam{
+    border: 1px solid #191919;
+}

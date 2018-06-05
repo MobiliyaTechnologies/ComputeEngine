@@ -1,0 +1,118 @@
+<!-- <div class="container-fluid background"> -->
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+    <form class="form" id="myForm" #connectCamForm="ngForm">
+        <br>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label class="text" for="streamingUrl">STREAMING URL</label>
+                    <br>
+                    <div class="col-sm-11 col-xs-11" style="padding:0">
+                    <input type="text" class="form-control listcam" id="streamingUrl" placeholder="Enter unique streaming Url" [(ngModel)]="streamingUrl"
+                        name="streamingUrl" required>
+                        </div>
+                        <div class="col-sm-1 col-xs-1" style="padding:0">
+                         <button type="submit" class="btn btn-primary" style="float: right;" (click)="takePreview()" size="6">
+                            <span class="glyphicon glyphicon-search"></span></button>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="col-sm-12 col-xs-12" style="text-align: center;">
+                <button type="submit" class="btn btn-primary" (click)="takePreview()" size="6">
+                            <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </div>
+        </div> -->
+        <br>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div class="form-group" style="width:100%; height:100%;text-align: center;">
+                    <img *ngIf="previewSrcFlag=== true && IsTakePreview === true" style="width:300px; height:180px; margin: 0 auto;" [src]="domSanitizer.bypassSecurityTrustUrl(previewSrc)">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="text" for="deviceName">DEVICE NAME (Camera name to be displayed)</label>
+                    <input type="text" class="form-control listcam" id="deviceName" placeholder="Enter unique device name without spaces" [(ngModel)]="deviceName"
+                        name="deviceName" required>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="text" for="deviceName">DEVICE TYPE</label>
+                    <select id="deviceType" data-style="btn-info" class="form-control listcam" [(ngModel)]="deviceType" name="devType" required>
+                            <option value="">Select device type</option>
+                            <option value="Mobile" selected>Mobile 360</option>
+                            <option value="DVR" selected>DVR</option>
+                            <option value="IP" selected>IP</option>
+                        </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="text" for="deviceName">AGGREGATOR</label>
+                    <select id="aggrtype " data-style="btn-info" class="form-control listcam" [(ngModel)]="aggrType" name="aggrType" required>
+                        <option value={{aggr._id}} *ngFor="let aggr of aggregators;">{{aggr.deviceName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label class="text" for="deviceName">COMPUTE ENGINE</label>
+                    <select id="compType " data-style="btn-info" class="form-control listcam" [(ngModel)]="compType" name="compType" required>
+                        <option value={{comp._id}} *ngFor="let comp of computeengines">{{comp.deviceName}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+                <div class="form-group ">
+                    <label class="text" for="location1">LOCATION</label>
+                    <input type="text" class="form-control listcam" id="location1" [(ngModel)]="floorMap" name="location1">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-6 col-xs-12" style="padding-bottom:3%;">
+                <button type="submit"  *ngIf="!isUpdate && !isConnectCam" class="btn btn-primary" [disabled]="!connectCamForm.form.valid" (click)="PushCamData()">CONNECT</button>
+                <button type="submit"  *ngIf="!isUpdate && !isConnectCam" class="btn btn-primary" (click)="goToHome()" >CANCEL</button>
+                
+                <button type="submit"  *ngIf="isUpdate &&  !isConnectCam" class="btn btn-primary" [disabled]="!connectCamForm.form.valid" (click)="UpdatePushCamData()">NEXT</button>
+                <button type="submit"  *ngIf="isUpdate && !isConnectCam" class="btn btn-primary" (click)="goToCameras()" >CANCEL</button>
+
+                <button type="submit"  *ngIf="isConnectCam && !isUpdate" class="btn btn-primary" [disabled]="!connectCamForm.form.valid" (click)="connectCameraPushData()">CONNECT</button>
+                <button type="submit"  *ngIf="isConnectCam && !isUpdate" class="btn btn-primary" (click)="goToCameras()" >CANCEL</button>
+                
+            </div>
+        </div>
+    </form>
+    <!-- <br> -->
+<!-- </div> -->
+<!-- 
+
+
+
+            <div class="col-sm-6 col-xs-12" *ngIf="isUpdate">
+                <button type="submit"   class="btn btn-primary" (click)="UpdatePushCamData()">UPDATE</button>
+                <button type="submit"   class="btn btn-primary" (click)="goToCameras()" >CANCELupdate</button>
+            </div>
+            <div class="col-sm-6 col-xs-12" *ngIf="isSlider">
+                <button type="submit"  class="btn btn-primary" (click)="PushCamData()">CONNECTslider</button>
+                <button type="submit"  class="btn btn-primary" (click)="goToHome()" >CANCELslider</button>
+            </div>
+
+            <div class="col-sm-6 col-xs-12" ngIf="isDashboard">
+                <button type="submit"  class="btn btn-primary" (click)="PushCamData()">CONNECTdash</button>
+                <button type="submit"  class="btn btn-primary" (click)="goToCameras()" >CANCELdash</button>
+            </div> -->

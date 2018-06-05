@@ -1,0 +1,47 @@
+input[type=text],
+input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+.jumbotron {
+  padding-top: 1%;
+  background-color: inherit;
+  margin-bottom: 0%;
+}
+
+.jumbotron h2{
+text-align:center;
+color:black;
+}
+
+.form-group label{
+  color:black;
+} 
+.loginForm {
+margin: 0 auto; 
+width:27%;
+margin-top:5%;
+}
+/* .customLoader{
+  display: block;
+  width: 12%;
+  height: 12%;
+  position: absolute;
+} */
+/* .loader {
+  background-color: #212121;
+  background-image: url("../../assets/img/loader.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.48;
+  z-index: 69;
+  width: 20%;
+  height: 20%;
+  position: absolute;
+  left: 0;
+  top: 0;
+} */

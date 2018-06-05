@@ -1,0 +1,142 @@
+<div class="container-fluid ">
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+  <div class="row">
+    <div class="addvideo">
+      <h5>Video Indexing</h5>
+    </div>
+    <div class="videoDiv">
+      <button type="submit" class="btn btn-primary" id="connectCamera" (click)="addVideo()"> NEW VIDEO </button>
+    </div>
+  </div>
+
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+
+  <form class="form" id="myForm" #indexForm="ngForm">
+    <div class="row background" *ngIf="isNewVideo">
+      <div class="col-sm-12 cameraData">
+        <div class="col-sm-12">
+          <br>
+          <div class="row">
+            <div class="col-sm-12">
+              <button type="button" class="btn btn-primary" (click)="onCancel()">
+                BACK
+              </button>
+            </div>
+          </div>
+          <br>
+          <br>
+          <div class="row">
+            <div class="form-group">
+              <div class="col-sm-12 col-xs-12">
+                <p>
+                  <b>VIDEO NAME</b>
+                </p>
+                <input type="text" class="form-control " id="videoName" [(ngModel)]="videoName" name="videoName" required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="form-group">
+              <div class="col-sm-12 col-xs-12">
+                <p>
+                  <b>CAMERA</b>
+                </p>
+                <select id="cameraName" data-style="btn-info" class="form-control" [(ngModel)]="cameraName" name="cameraName" (change)="onChange($event.target.value)" required>
+                  <option *ngFor="let camera of cameraList;" value={{camera.deviceName}}>{{camera.deviceName}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="form-group">
+              <div class="col-sm-6 col-xs-12">
+                <p>
+                  <b>DATE</b>
+                </p>
+                <input type="date" id="Date" [(ngModel)]="Date" name="Date" (mouseenter)="meEvent($event)" required>
+              </div>
+              <div class="col-sm-6 col-xs-12">
+                <p>
+                  <b>START TIME (HOURS:MINUTES)</b>
+                </p>
+                <input type="time" min="00:01" max="24:00" id="Time" [(ngModel)]="Time" name="Time" required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="form-group">
+              <div class="col-sm-12 col-xs-12">
+                <p>
+                  <b>TIME DURATION (IN MINUTES)</b>
+                </p>
+                <input type="number" min="1" max="60" id="timeDuration" [(ngModel)]="timeDuration" name="timeDuration" required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="row">
+              <div class="col-sm-12">
+                <button type="button" class="btn btn-primary" [disabled]="!indexForm.form.valid" (click)="onSubmit()">
+                  SUBMIT
+                </button>
+                <button type="button" class="btn btn-primary" id="cancel" (click)="onCancel()">
+                  CANCEL
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="row background scrollable" *ngIf="isVideoList">
+    <div class="col-sm-12" *ngIf="isList; else noList">
+      <div class="col-sm-12" *ngFor="let video of videosList">
+        <div class="col-sm-12 listMargin camList">
+          <a class="btn-link center listNames pointer" (click)="videoDetails(video)">{{video.videoName}}</a>
+        </div>
+      </div>
+    </div>
+    <ng-template #noList>
+      <div class= "col-sm-12  center" >
+        <p>No video available! Please add a new video.</p>
+      </div>
+    </ng-template>
+  </div>
+
+
+  <div class="row background" *ngIf="IsiFrame">
+    <div class="col-sm-12">
+      <br>
+      <div class="row">
+        <div class="col-sm-12">
+          <button type="button" class="btn btn-primary" (click)="onCancel()">
+            BACK
+          </button>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-12">
+          <h5 class="text">{{videoName}}</h5>
+        </div>
+      </div>
+      <div class="row iframeDivRow">
+        <div class="col-sm-4 col-xs-12 iframeDivCol">
+          <div id="iframeDiv" class="iframeDiv">
+            <iframe class="iframe" height="{{this.height}}" [src]="url1"></iframe>
+          </div>
+        </div>
+        <div class="col-sm-8 col-xs-12 iframeDivCol">
+          <div id="iframeDiv" class="iframeDiv">
+            <iframe id ="insights" class="iframe" height="{{this.height}}" [src]="url2"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

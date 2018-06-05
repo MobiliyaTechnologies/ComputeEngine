@@ -1,0 +1,149 @@
+.background{
+    min-height: 70vh;
+    background-color: white;
+    border-radius: 5px;
+}
+.scrollableDiv{
+    overflow-y: scroll;
+    height:30vh;
+}
+.floorPlan{
+    color:white;
+}
+.addcamera{
+    float:left;
+    color:white;
+}
+.camerasDiv{
+    float:right;
+}
+.floorMap{
+    width:100%;
+    height: 40vh;
+    border:1px dotted black;
+}
+.glyphicon-facetime-video{
+    font-size: 20px;
+    color:gray;
+}
+.noFloorPlan{
+    margin-top: 10%;
+}
+.closetag{
+    visibility: hidden;
+}
+.logo{
+    margin:0 auto;
+    display:block;
+}
+.displaytag{
+    margin:0 auto;
+    display:block;
+}
+.nofloormaps{
+    text-align:center;
+}
+.uploadmap{
+    text-align:center;
+}
+a:hover{
+    cursor: pointer;
+}
+.floorMapImage{
+    width:100%;
+    height:100%;
+}
+.scrollable{
+    overflow-y: scroll;
+    height:30vh;
+}
+.no_select
+{
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.reset{
+    transform: translate(0px,0px);
+    -webkit-transform: translate(0px,0px); 
+    -moz-transform:    translate(0px,0px); 
+    -ms-transform:    translate(0px,0px); 
+    -o-transform:      translate(0px,0px); 
+}
+.sidebarfloor{
+    min-height: 70vh;
+    background-color: #F5F5F5;
+}
+
+.cameraList{
+    background-color:  rgb(229, 233, 242);
+    padding: 2%;
+    margin-bottom: 1%;
+    border-radius: 5px;
+}
+
+.cameraList:hover{
+    background-color:  rgba(216, 246, 230, 1);
+}
+
+.cameraListgreen{
+    background-color:  rgba(216, 246, 230, 1);
+    padding: 2%;
+    margin-bottom: 1%;
+    border-radius: 5px;
+}
+
+.cameraListgreen:hover{
+    background-color:  rgba(216, 246, 230, 1);
+}
+
+.inner-addon {
+    position: relative;
+    width: 90%;
+    margin: 2% auto;
+  }
+  
+  /* style glyph */
+  .inner-addon .glyphicon {
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+  }
+  
+  /* align glyph */
+  .left-addon .glyphicon  { left:  0px;}
+
+  
+  /* add padding  */
+  .left-addon input  { padding-left:  30px; }
+ 
+ 
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+.notransition {
+    -webkit-transform: none;
+    transform: none;
+  }
+
+.overflow-text{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}

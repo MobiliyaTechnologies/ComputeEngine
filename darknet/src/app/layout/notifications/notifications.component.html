@@ -1,0 +1,38 @@
+<div class="container-fluid ">
+    <div class="row">
+        <div class="addcamera">
+            <h5>Notifications</h5>
+        </div>
+    </div>
+
+    <div class="row background" *ngIf="!notificationsFlag">
+        <div class="col-sm-12 noFloorPlan" *ngIf="!floorMapFlag">
+            <div class="row ">
+                <img class="logo" src='../../../assets/img/GIFS/nonotifications.png'>
+            </div>
+            <br>
+            <div class="row nofloormaps">
+                No new notifications
+            </div>
+            <br>
+        </div>
+    </div>
+    <div class="row background" *ngIf="notificationsFlag">
+        <div class="col-sm-12">
+            <div class="col-sm-12 scrollable">
+                <!-- <p>Hello world</p> -->
+                <div class="row" *ngFor="let notify of notifications">
+                    <div class="col-sm-12 message" [ngClass]="notify.isRead === 0 ? 'messageunread' : 'messageread' ">
+                        <div class="row notify">
+                            <span class="notifyHead">{{notify.message}}</span>
+                        </div>
+                        <div class="row notify">
+                            <span class="notifyDate">{{notify.createdAt}}</span>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

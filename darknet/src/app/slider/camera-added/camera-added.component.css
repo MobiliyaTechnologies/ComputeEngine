@@ -1,0 +1,38 @@
+.homepage{
+   
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+}
+
+    .background{
+        border: 1px solid #e7e7e7;
+        min-height: 70vh;
+        background-color: white;
+        padding:0%;
+        width:80%;
+        margin: 0 auto;
+        margin-top:3%;
+    }
+.cameraConnect{
+    margin: 5% auto;
+    text-align: center;
+}
+
+    
+    .text2
+    {
+        
+        font-family: 'Proxima Nova';
+        font-size: 18px;
+        color: #a3a2a2;
+    }
+
+        .textCenter
+    {
+    text-align: center;
+    font-family: 'Proxima Nova';
+    font-size: 24px;
+    color: #353535;
+    margin-top:10%;
+    }

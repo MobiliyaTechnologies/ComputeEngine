@@ -1,0 +1,42 @@
+
+    .background{
+        border: 1px solid #e7e7e7;
+        min-height: 70vh;
+        background-color: white;
+        padding:0%;
+        width:80%;
+        margin: 0 auto;
+        margin-top:5%;
+    }
+    
+    .center {
+    margin: auto;
+    width: 60%;
+    padding: 10px;
+    }
+
+    .textCenter
+    {
+    text-align: center;
+    font-family: 'Proxima Nova';
+    font-size: 24px;
+    color: #353535;
+    margin-top:10%;
+    }
+
+    .text1
+    {
+        margin-top:3%;
+    text-align: center;
+    font-family: 'Proxima Nova';
+    font-size: 24px;
+    color: #353535;
+    }
+    .text2
+    {
+        
+        font-family: 'Proxima Nova';
+        font-size: 18px;
+        color: #a3a2a2;
+    }
+

@@ -1,0 +1,363 @@
+<div class="container-fluid">
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+  <div class="row">
+    <div class="facetext">
+      <h5> Face Recognition </h5>
+    </div>
+  </div>
+
+  <div class="background">
+    <div id="exTab3">
+      <ul class="nav nav-pills">
+        <li>
+          <a href="#identified" data-toggle="tab">Identified <button type="submit" class="btn btn-info" style="color:rgba(50, 174, 238, 1);border-color:rgba(50, 174, 238, 1);"> {{identified}} </button> </a>
+        </li>
+        <li class="active"><a href="#unidentified" data-toggle="tab">Unidentified <button type="submit" class="btn btn-info" style="color:rgba(50, 174, 238, 1);border-color:rgba(50, 174, 238, 1);"> {{unidentified}} </button> </a>
+          <!-- style="color:black;background-color:white;border-bottom:2px solid black;" -->
+        </li>
+      </ul>
+
+      <hr style="width:99%;">
+      <div class="tab-content scrollable">
+
+
+      <div class="tab-pane" id="identified" *ngIf="!isIdentifiedPresent">
+          <div class="displayDiv2">
+            <img src="../../../assets/img/web/unidentified-empty.png"><br>
+
+            <span class="displayText"> No data to show <br>
+              Add camera for Face Recognition and Go to the Unidentified tab</span>
+          </div>
+      </div>
+
+
+
+        <div class="tab-pane" id="identified" *ngIf="isIdentifiedPresent">
+          <div *ngFor="let pdata1 of identifiedDetails;let i2=index">
+          <!-- <div style="margin-left:4%;"> -->
+               <label class="containerNew"><span class="displayText2"> {{ pdata1.date}} </span>
+                  <input type="checkbox" id="allCheckboxesKnown" name="allCheckboxesKnown"  value="allCheckboxesKnown" (click)="toggleSelect($event,i2,0)" />
+                   <span class="checkmark"></span> 
+              </label> 
+                 <button type="submit" class="btn btn-primary" style="float:right;" id="removeall" (click)="RemoveAllRecords(i2,0)"> Remove All </button>
+          <!-- </div> -->
+
+          <div class="col-sm-12 ">
+            <!-- <ng-template #dynamicInsert></ng-template> -->
+            <!-- <div class="textColor"> Wednesday, 28th Feb 2018 </div>  -->
+            <div *ngFor="let pdata of pdata1.faces;let i=index">
+              <div>
+                <div class="col-sm-12" style="padding-left:0px;">
+                  <hr><br>
+
+              <div class="col-sm-1">
+               <label class="containerNew">
+                <input type="checkbox" name="pdata[{{i}}]"  [checked]="pdata.selected" value="pdata.selected" (change)="pdata.selected = !(pdata.selected)"/>
+                  <span class="checkmark"></span>
+              </label> 
+              </div>
+
+                  <div class="col-sm-3" id="{{pdata._id}}">
+                  </div>
+                  <div class="col-sm-4" style="text-align:left;">
+                    <span class="nowrap"> <b> {{ pdata.userData }}  |  {{ pdata.gender }}  |  {{ pdata.age }} Years </b></span><br>
+                    <span class="displayText nowrap"> <b>{{ pdata.deviceName }} at {{ pdata.createdAt }} </b></span><br>
+
+                    
+                    <button type="submit" id="historyPopup1" style="margin-left:0%;" class="btn btn-primary noBorder noLeftPadding" (click)="viewHistory(pdata)" size="8" data-dismiss="modal">View History</button>
+                      
+                    <button type="submit" class="btn btn-primary noBorder noLeftPadding" (click)="saveValue(pdata)" size="8" data-dismiss="modal" data-toggle="modal"
+                      data-target="#editModal">Edit </button>
+                    <button type="submit" class="btn btn-primary noBorder noLeftPadding" (click)="saveValue(pdata)" size="8" data-dismiss="modal" data-toggle="modal"
+                      data-target="#removeModal">Delete</button>
+
+
+                    <button type="submit" id="historyPopup2" class="btn btn-primary noBorder noLeftPadding"  style="visibility:hidden;" [hidden]="true"  size="8" data-dismiss="modal"
+                      data-toggle="modal" data-target="#historyModal"> view </button>
+
+                  </div>
+                  <div class="col-sm-4">
+                    <img [src]="domSanitizer.bypassSecurityTrustUrl(pdata.userImage)" alt="" style="width:80%;margin-left:45%"  id="realImg">
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+
+
+
+        <div class="tab-pane active" id="unidentified" *ngIf="!isUnidentifiedPresent">
+          <div class="col-sm-12" *ngIf="isCameraPresent">
+            <div class="col-sm-3">
+              <div class="form1">
+                <select id="cameraName" data-style="btn-info" class="form-control" [(ngModel)]="cameraName" name="cameraName" (change)="onChange($event.target.value)">
+                          <option *ngFor="let camera of detectionCameras;" value={{camera.deviceName}}>{{camera.deviceName}}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-sm-3">
+              <div class="form1">
+                <select id="time" class="form-control" name="time" (change)="onChangeTime($event.target.value)">
+                                <option value="0" selected>Select Time</option>
+                                <option value="1">Next 1 Min</option>
+                                <option value="2">Next 2 Min</option>
+                                <option value="3">Next 3 Min</option>
+                                <option value="4">Next 4 Min</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-sm-3">
+              <button type="submit" class="btn btn-primary" [disabled]="!isOn" id="startCapture" (click)="startCapture()"> START </button>
+            </div>
+
+              <div class="displayDiv" >
+            <img src="../../../assets/img/web/unidentified-empty.png"><br>
+
+            <span class="displayText"> No data to show <br>
+              Select camera and time, click on Start button to view list of unidentified faces </span>
+          </div>
+
+          </div>
+          <!-- <div> -->
+          <br><br>
+
+          <div class="displayDiv"  *ngIf="!isCameraPresent">
+            <img src="../../../assets/img/web/unidentified-empty.png"><br>
+
+            <span class="displayText"> No data to show <br>
+              Select camera and time, click on Start button to view list of unidentified faces </span>
+          </div>
+        </div>
+
+
+        <div class="tab-pane active" id="unidentified" *ngIf="isUnidentifiedPresent">
+          <div class="col-sm-12" *ngIf="isCameraPresent">
+            <div class="col-sm-3">
+              <div class="form1">
+                <select id="cameraName" style="margin-bottom:15%;margin-left:-23%;width:135%;" data-style="btn-info" class="form-control" [(ngModel)]="cameraName" name="cameraName" (change)="onChange($event.target.value)">
+                          <option *ngFor="let camera of detectionCameras;" value={{camera.deviceName}}>{{camera.deviceName}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="form1">
+                <select id="time" class="form-control" name="time" (change)="onChangeTime($event.target.value)">
+                                <option value="0" selected>Select Time</option>
+                                <option value="1">Next 1 Min</option>
+                                <option value="2">Next 2 Min</option>
+                                <option value="3">Next 3 Min</option>
+                                <option value="4">Next 4 Min</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-sm-3">
+              <button type="submit" class="btn btn-primary" [disabled]="!isOn" id="startCapture" (click)="startCapture()"> START </button>
+            </div>
+          </div>
+          <!-- <div> -->
+            
+        
+
+      <div *ngFor="let pdata1 of unidentifiedDetails;let i2=index">
+          <!-- <div  style="margin-left:3%;" > --><br>
+               <label class="containerNew">
+                 <span class="displayText2"> {{ pdata1.date }} </span>
+                  <input type="checkbox" id="allCheckboxesUnknown" name="allCheckboxesUnknown"  value="allCheckboxesUnknown" (click)="toggleSelect($event,i2,1)" /> 
+                   <span class="checkmark"></span> 
+              </label> 
+                 <button type="submit" class="btn btn-primary" style="float:right;" id="removeall" (click)="RemoveAllRecords(i2,1)"> Remove All </button>
+          <!-- </div> -->
+
+          <div *ngFor="let pdata of pdata1.faces; let i=index">
+            <div class="col-sm-12" style="padding-left:0px;">
+              <hr><br>
+              <div class="col-sm-1">
+               <label class="containerNew">
+                  <input type="checkbox" name="pdata[{{i}}]"  [checked]="pdata.selected" value="pdata.selected"  (change)="pdata.selected = !(pdata.selected)"/>
+                  <span class="checkmark"></span>
+              </label> 
+              </div>
+
+              <div class="col-sm-2" id="{{pdata._id}}"> 
+                  <!-- This div is for displaying cropped image -->
+              </div>
+
+              <div class="col-sm-6" style="text-align:left;">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <input type="text" style="margin-left:0%;width:130px;" class="form-control" id="userdata" placeholder="Name" (change)="getUsername($event.target.value,i,i2)" name="userdata" required>
+                  </div>
+
+                  <div class="col-sm-3" style="padding-left:0px;">
+                    <div class="form1">
+                      <select style="padding:7px 1px;width:80px;margin-left:70%;" id="gender" class="form-control" name="gender" (change)="onChangeGender($event.target.value)" [(ngModel)]="pdata.gender">
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                          </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-4" style="padding-left:0px;">
+                    <div class="form1">
+                      <select style="padding:7px 1px;margin-left:60%;" id="ageEdit" data-style="btn-info" class="form-control" name="ageEdit" (change)="onChangeAge($event.target.value)" [(ngModel)]="pdata.age">
+                            <option selected value="{{pdata.age}}">{{ this.Math.round(pdata.age) }} Years</option>          
+                            <option *ngFor="let personage of ageArray;" value="{{personage.ageEdit}}">{{personage.ageDisplay}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+
+                <span class="displayText"> <b> {{ pdata.deviceName }}  at  {{ pdata.createdAt }} </b> </span><br>
+
+                 <button type="submit" class="btn btn-primary noBorder" id="save" (click)="addUnknown(pdata,i,i2)"> Save </button> 
+                 <button type="submit" class="btn btn-primary noBorder" (click)="saveValue(pdata)" size="8" data-dismiss="modal" data-toggle="modal"
+                  data-target="#removeModalUnknown">Delete</button> 
+<!-- 
+                    &nbsp;&nbsp;&nbsp; <a id="save" target="_blank" class="linkColor" (click)="addUnknown(pdata,i)"> Save </a>
+                &nbsp;&nbsp;&nbsp; <a class="linkColor" (click)="saveValue(pdata)" data-dismiss="modal" data-toggle="modal" data-target="#removeModalUnknown"> Delete </a> -->
+                  
+              </div>
+              
+              <div class="col-sm-3" style="float:right;">
+                <img [src]="domSanitizer.bypassSecurityTrustUrl(pdata.userImage)" alt=""   style="width:100%;margin-left:22%;">
+              </div>
+            </div>
+          </div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="modal fade" id="removeModal" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Remove Persons Record</h4>
+        </div>
+        <div class="modal-body" style="padding:2%;">
+          <div class="row">
+            <div class="col-sm-12">
+              <p class="modaltext">Are you sure you want to remove persons record?</p>
+              <p class="modaltext">This will permanently delete it from the system.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="text-align:left;">
+          <button type="submit" class="btn btn-primary" (click)="removeRecord(0)" size="8" data-dismiss="modal" data-toggle="modal"
+            data-target="#removeModal">REMOVE</button>
+          <button type="submit" class="btn btn-primary" size="8" data-dismiss="modal" data-toggle="modal" >CANCEL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="removeModalUnknown" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Remove Persons Record</h4>
+        </div>
+        <div class="modal-body" style="padding:2%;">
+          <div class="row">
+            <div class="col-sm-12">
+              <p class="modaltext">Are you sure you want to remove persons record?</p>
+              <p class="modaltext">This will permanently delete it from the system.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="text-align:left;">
+          <button type="submit" class="btn btn-primary" (click)="removeRecord(1)" size="8" data-dismiss="modal" data-toggle="modal"
+            data-target="#removeModalUnknown">REMOVE</button>
+          <button type="submit" class="btn btn-primary" size="8" data-dismiss="modal" data-toggle="modal" data-target="#removeModalUnknown">CANCEL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal fade" id="historyModal" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"> History </h4>
+        </div>
+        <div class="modal-body scrollHistory" style="padding:2%;">
+          <div *ngFor="let personHistory of historyAll">
+            <div class="col-sm-12">
+              <div class="col-sm-5"> {{ personHistory.timestamp }} </div>
+              <div class="col-sm-2">
+                <ul class="ulColor">
+                  <li></li>
+                </ul>
+              </div>
+              <div class="col-sm-5"> {{ personHistory.deviceName }} </div>
+            </div>
+            <div class="col-sm-12" style="text-align:center;">
+              <div class="col-sm-3"></div>
+              <div class="col-sm-2" style="margin-left:16%;"> | </div>
+              <div class="col-sm-7"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="text-align:left;">
+          <button type="submit" class="btn btn-primary" size="8" data-dismiss="modal" data-toggle="modal" data-target="#historyModal"> Ok </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="editModal" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Update Persons Record</h4>
+        </div>
+        <div class="modal-body" style="padding:2%;">
+
+          <form class="form" id="myForm" #editRecordForm="ngForm">
+            <div class="form-group">
+              <label class="text" for="username">Enter Username </label>
+              <input type="text" class="form-control listcam" id="userdata" placeholder="Enter Username" [(ngModel)]="userdata" name="userdata"
+                required>
+            </div>
+            <div class="form-group">
+              <label> Select Gender : </label>
+              <select id="gender" class="form-control" name="gender" (change)="onChangeGenderUpdate($event.target.value)" required>
+                <option value="Male" selected>Male</option>
+                <option value="Female">Female</option>
+            </select>
+            </div>
+            <div class="form-group">
+              <label> Select Age : </label>
+              <select id="ageEdit" data-style="btn-info" class="form-control" name="ageEdit" (change)="onChangeAgeUpdate($event.target.value)" required>
+                 <option *ngFor="let personage of ageArray;" value="{{personage.ageEdit}}">{{personage.ageEdit}}</option>
+            </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer" style="text-align:left;">
+          <button type="submit" class="btn btn-primary" (click)="editRecord(pdata)" [disabled]="!editRecordForm.form.valid" size="8" data-dismiss="modal" data-toggle="modal"
+            data-target="#editModal">UPDATE</button>
+          <button type="submit" class="btn btn-primary" size="8" data-dismiss="modal" data-toggle="modal" data-target="#editModal">CANCEL</button>
+        </div>
+      </div>
+    </div>
+  </div>

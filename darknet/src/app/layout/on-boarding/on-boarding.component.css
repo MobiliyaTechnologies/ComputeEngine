@@ -1,0 +1,72 @@
+/* .devicemenu{
+border: 1px solid #e7e7e7;
+min-height: 70vh;
+background-color: white;
+padding:0%;
+}
+.cameraList{
+padding:2%;
+}
+.cameralistdiv{
+
+min-height:70vh;
+}
+.cameratext{
+padding:2%;
+width: 100%;
+display: inline-block;
+}
+.lawngreen{
+margin-top: 1%;
+padding-top:1%;
+padding-bottom:1%;
+padding-left: 2%;
+border:1px solid #191919;
+background-color:lawngreen;
+} */
+
+.middle {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .card:hover .card-img-top {
+    opacity: 0.3;
+  }
+  .card:hover .middle {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  .container-fluid:hover .liveCameras  {
+    cursor: pointer;
+    
+  }
+  .liveCameras:hover .card {
+    cursor: pointer;
+    background-color:rgb(34, 122, 112);
+    /* color:white; */
+  }
+  .liveCameras .title{
+    color:white;
+  }
+  .liveCameras .card{
+    background-color:rgb(1, 184, 170);
+  }
+  .playButton{
+    font-size: 30px;
+    color: #DD0330;
+
+  }
+  .card-img-top{
+    width:100%;
+    height:150px;
+  }
+  .card-title{
+    text-align:center;
+  }

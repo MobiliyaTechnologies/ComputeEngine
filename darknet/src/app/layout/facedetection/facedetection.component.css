@@ -1,0 +1,328 @@
+.facetext
+{
+    float: left;
+    color: white;
+}
+
+.background{
+    min-height: 70vh;
+    background-color: white;
+    border-radius: 5px;
+}
+
+#exTab1 .tab-content {
+  color : white;
+  background-color: white;
+  padding : 5px 0px;
+}
+
+#exTab2 h3 {
+  color : white;
+  background-color: white;
+  padding : 5px 0px;
+}
+
+/* remove border radius for the tab */
+
+#exTab1 .nav-pills > li > a {
+  border-radius: 0;
+}
+
+/* change border radius for the tab , apply corners on top*/
+
+#exTab3 .nav-pills > li > a {
+  border-radius: 0px 0px 0 0 ;
+}
+
+#exTab3 .tab-content {
+
+  padding : 5px 10px;
+}
+
+/* .textColor
+{
+    color: rgba(163, 162, 162, 1);
+} */
+.textColor
+{
+    color: rgba(163, 162, 162, 1);
+   
+}
+.imgDiv
+{
+    float:right;
+}
+.infoDiv
+{
+    float:left;
+}
+  .scrollable{
+    overflow-y: scroll;
+    height:60vh;
+}
+
+.crop
+{
+  
+     position:absolute; 
+    clip:rect(0,100px,100px,0); 
+    /* width: 100px;
+    height: 80px;
+    background-position: -50px -60px; */
+
+}
+
+#crop-the-cats {
+    width: 100px;
+    height: 80px;
+    background-image: url(http://i.stack.imgur.com/ArS4Q.jpg);
+    background-position: -50px -60px;
+}
+
+
+.scrollable{
+    overflow-y: scroll;
+    height:70vh;
+}
+
+.nowrap {
+  white-space: nowrap ;
+}
+
+.left
+{
+    text-align: left;
+}
+
+.right
+{
+    text-align: right;
+}
+
+.center
+{
+    text-align: center;
+}
+
+.ulColor
+{
+    color:lightskyblue;
+}
+.scrollHistory{
+    overflow-y: scroll;
+    height:30vh;
+}
+
+.displayText
+{
+    color: rgba(163, 162, 162, 1);
+}
+
+.displayText2
+{
+    color: rgba(163, 162, 162, 1);
+    font-size: 15px;
+}
+
+.displayDiv
+{
+    text-align:center; 
+    margin-top:10%;
+}
+
+.displayDiv2
+{
+    text-align:center; 
+    margin-top:16%;
+}
+
+/* li::before {
+  content: "• ";
+  color: red;
+} */
+
+
+.linkColor
+{
+    color:rgba(43, 212, 123, 1)
+}
+
+
+
+
+
+
+
+/* The containerNew */
+.containerNew {
+    
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.containerNew input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(195, 199, 206, 1);
+    border-radius: 3px;
+}
+
+/* On mouse-over, add a grey background color */
+.containerNew:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.containerNew input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.containerNew input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.containerNew .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+
+/* The containerInner */
+.containerInner {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.containerInner input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.containerInner:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.containerInner input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.containerInner input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.containerInner .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.noBorder
+{
+    border-width:0px;
+}
+.noLeftPadding
+{
+    padding:7px 1px;
+    margin-left:4%;
+}
+
+.left{
+    padding-left:1px;
+}
+
+.nowrap{
+     white-space: nowrap;
+}
+
+
+.form{
+    width: 95%;
+    margin: 0 auto;
+}
+
+.ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948;
+}
+.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442;
+}
+
+.listcam{
+    border: 1px solid #191919;
+}
+
+/* a:hover {
+    background-color: yellow;
+} */

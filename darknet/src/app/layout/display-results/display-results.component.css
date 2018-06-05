@@ -1,0 +1,51 @@
+.devicemenu {
+    border: 1px solid #e7e7e7;
+    min-height: 70vh;
+    background-color: white;
+    border-radius: 5px;
+    /* padding:0%; */
+}
+.card1 {
+    height: 50vh;
+    padding:0;
+    border:none;
+    box-shadow: none;
+  }
+.text{
+    font-size: 24px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 1);
+}
+.live-image-div {
+    display: block;
+    height:100%;
+    width:100%;
+    margin-top: 1%;
+    position:absolute;
+}
+.live-image {
+    height: 100%;
+    width: 100%;
+    border: 1px dotted lightgray;
+}
+.textHeadings{
+    font-size: 12px;
+    color: rgba(118, 118, 118, 1);
+}
+.textValues{
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(53, 53, 53, 1);
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    .devicemenu {
+        border: 1px solid #e7e7e7;
+        background-color: white;
+        height: 130vh;
+        /* padding:0%; */
+    }
+    .results{
+        margin-top:25%;
+    }
+
+}

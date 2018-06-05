@@ -1,0 +1,44 @@
+<nav class="navbar navbar-default1">
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" (click)="sidebarToggle()">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar bar1"></span>
+        <span class="icon-bar bar2"></span>
+        <span class="icon-bar bar3"></span>
+      </button>
+      <!-- <a class="navbar-brand" href="#">{{getTitle()}}</a> -->
+    </div>
+    <div class="collapse navbar-collapse">
+      <div class=" navbar-nav navbar-left" style="margin-top:1.5%;">
+        <img src="../../assets/img/logo.png" alt="">
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a (click)="showNotifications()">
+            <img border="0" alt="" src="../../assets/img/web/alerts.png">
+          </a>
+        </li>
+        <li>
+          <br>
+          <img border="0" alt="" src="../../assets/img/new_logo.png" height="30" class="card">
+        </li>
+        <li>
+          <!-- <a href="/login" (click)="logout()">
+                      <img border="0" alt="" src="../../assets/img/web/dropdownarowheader.png"  height="7" >  
+                    </a>  -->
+
+          <a href="/login" (click)="logout()">
+            <!-- <img border="0" alt="" src="../../assets/img/web/dropdownarowheader.png"  height="7" >   -->
+            <i class="fa fa-sign-out" style="font-size:24px;color:white;"></i>
+          </a>
+
+
+
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</nav>

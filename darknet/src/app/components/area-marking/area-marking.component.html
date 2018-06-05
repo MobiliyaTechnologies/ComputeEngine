@@ -1,0 +1,144 @@
+<!-- <div class="container-fluid background"> -->
+<div class="row box-element">
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+  <div class="col-sm-12">
+    <br>
+    <div class="row">
+      <div class="col-sm-3" style="padding:0; padding-top: 7px;">
+        <span class="contentName">Mark Area</span>
+      </div>
+      <div class="col-sm-6">
+        <select id="featureName" data-style="btn-info" class="form-control" [(ngModel)]="featureName" name="featureName" (ngModelChange)="FeatureSelected($event)">
+          <option *ngFor="let algo of compFeatureNames;" [ngValue]='algo.featureName'>{{algo.displayAlgo}}</option>
+        </select>
+      </div>
+      <!-- <div class="col-sm-3">
+        <div *ngIf="featureName === 'objectDetection'; else noObject">
+          <select id="objectName" data-style="btn-info" class="form-control" [(ngModel)]="objectName" name="objectName">
+            <option *ngFor="let object of compFeatureNames[featureSelectionIndex].objectSupported;" [ngValue]='object'>{{object}}</option>
+          </select>
+        </div>
+        <ng-template #noObject></ng-template>
+      </div> -->
+      <div class="col-sm-3">
+        <div *ngIf="ShapeName === 'Line'; else otherShapes">
+          <select id="lineDir" data-style="btn-info" class="form-control" [(ngModel)]="lineDir" name="lineDir">
+            <option value="left">Left</option>
+            <option value="right" selected>Right</option>
+            <option value="top" selected>Top</option>
+            <option value="bottom" selected>Bottom</option>
+          </select>
+        </div>
+        <ng-template #otherShapes></ng-template>
+      </div>
+    </div>
+    <br>
+    <div class="row box">
+      <div class="col-sm-12">
+        <div id="canvasRow" class="row header">
+          <div class="col-sm-6 textHeadings">
+            <span>{{deviceName}}</span>
+          </div>
+          <div class="col-sm-6">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+              <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-secondary" (click)="shapeSelected('Rectangle')" [ngClass]="(ShapeName === 'Rectangle')?'ShapeSelected':''">
+                  <img src="../../../assets/img/logos/square.png">
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="shapeSelected('Circle')" [ngClass]="(ShapeName === 'Circle')?'ShapeSelected':''">
+                  <img src="../../../assets/img/logos/circle.png">
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="shapeSelected('Triangle')" [ngClass]="(ShapeName === 'Triangle')?'ShapeSelected':''">
+                  <img src="../../../assets/img/logos/triangle.png">
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="shapeSelected('Line')" [ngClass]="(ShapeName === 'Line')?'ShapeSelected':''">
+                  <img src="../../../assets/img/logos/line.png">
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="onReset()">
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!-- <img src="../../../../assets/img/abc.png" style="width:100%; height: 50vh"> -->
+          <!-- <img [src]="domSanitizer.bypassSecurityTrustUrl(previewSrc)" style="width:100%; height: 50vh"> -->
+          <canvas #myCanvas class="img-responsive" width="{{this.width}}" height="{{this.height}}" (mousedown)="mdEvent($event)" (mouseup)="muEvent($event)"
+            (mousemove)="mmEvent($event)"></canvas>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+
+      <button type="submit" (click)="goBackFromSlider()" *ngIf="!isBackFromUpdate && !isBackFromDashboard" class="btn btn-primary">BACK</button>
+      <button type="submit" (click)="goBackFromUpdate()" *ngIf="isBackFromUpdate && !isBackFromDashboard" class="btn btn-primary">BACK</button>
+      <button type="submit" (click)="goBackToFromConnectCam()" *ngIf="!isBackFromUpdate && isBackFromDashboard" class="btn btn-primary">BACK</button>
+
+
+      <button type="submit" *ngIf="!isOnboarding" (click)="MarkArea()" class="btn btn-primary">SAVE CONFIGURATIONS</button>
+      <button type="submit" *ngIf="isOnboarding" (click)="MarkAndFinish()" class="btn btn-primary">SAVE CONFIGURATIONS</button>
+
+
+      <button type="submit" *ngIf="!isOnboarding" (click)="startStreaming()" class="btn btn-primary">START STREAMING</button>
+      <button type="submit" *ngIf="isOnboarding" (click)="startStreamingAndFinish()" class="btn btn-primary">START STREAMING</button>
+
+      <button type="submit" (click)="onSkip()" class="btn btn-primary">CANCEL</button>
+      <button type="submit" id="markerbtn" class="btn btn-primary" *ngIf="!(ShapeName === null)" data-toggle="modal" data-target="#myModal"
+      style="visibility:hidden;">opp</button>
+    </div>
+  </div>
+  <br>
+</div>
+
+<div class="modal fade bd-example-modal-sm" id="myModal" style="position: absolute;" role="dialog" data-backdrop="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-body" style="padding:5%;">
+        <form class="form" id="myForm" #areaMarkForm="ngForm">
+          <h4 class="modal-title">Marker Properties</h4>
+          <br>
+          <!-- <div class="form-group">
+            <label class="text" for="deviceName">ALGORITHM TYPE</label>
+            <select id="feature" data-style="btn-info" class="form-control" required [(ngModel)]="feature" name="feature" (ngModelChange)="FeatureSelectedMarker($event)">
+              <option *ngFor="let algo of compFeatureNames;" [ngValue]='algo.featureName'>{{algo.displayAlgo}}</option>
+            </select>
+          </div> -->
+          <div class="form-group">
+            <div *ngIf="featureName === 'objectDetection'; else noObject">
+              <label class="text" for="deviceName">OBJECT TYPE</label>
+              <select id="objectType" data-style="btn-info" class="form-control" required [(ngModel)]="objectType" name="objectType">
+                <option *ngFor="let object of objects" [ngValue]='object'>{{object}}</option>
+              </select>
+            </div>
+            <ng-template #noObject></ng-template>
+          </div>
+
+          <div class="form-group">
+            <label class="text" for="deviceName">MARKER NAME</label>
+            <input type="text" class="form-control listcam" id="markerName" placeholder="Enter Name" name="markerName"
+              required [(ngModel)]="markerName">
+          </div>
+
+          <div class="form-group">
+            <label class="text" for="deviceName">TAG</label>
+            <input type="text" class="form-control listcam" id="tagName" placeholder="Enter Tag" name="TagName" [(ngModel)]="TagName" >
+          </div>
+
+          <div class="row">
+            <div class="col-sm-5" style="text-align: left;">
+              <button type="submit" class="btn btn-primary" (click)="deleteBbox()" size="8" data-dismiss="modal" data-target="#myModal">CANCEL</button>
+            </div>
+            <div class="col-sm-2">
+              <button type="submit" id="closemarkerbtn" class="btn btn-primary" data-dismiss="modal" data-target="#myModal" style="visibility:hidden;">cp</button>
+            </div>
+            <div class="col-sm-5" style="text-align: right;">
+              <button type="submit" class="btn btn-primary" [disabled]="!areaMarkForm.form.valid" (click)="markerProp()" size="8">SUBMIT</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

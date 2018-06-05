@@ -1,0 +1,16 @@
+<div class="container-fluid" >
+  <div class="row homepage">
+  <h4>Welcome {{user.name}}!</h4>
+  <p>You can start viewing the camera data once you connect your camera.</p>
+  </div>
+  <br>
+  <div class="row background">
+    <div class="cameraConnect" >
+      <!-- <a routerLink="/layout/dashboard/connectCamera">Connect your camera now</a> -->
+      <button type="button" class="btn btn-default btn-sm" (click)="connectCamera()">
+          CONNECT YOUR CAMERA NOW
+      </button>
+      
+    </div> 
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="container-fluid devicemenu">
+    <div class="row">
+        <div class="col-sm-9">
+              <div class="floorMap">
+                <!-- <img style="width:200px; height:150px;margin: 0 auto;" [src]="./src/assets/img/abc.png" *ngIf="thumbnailImg"> -->
+              </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="row scrollableDiv">
+              <table id='table1' class="table table-striped">
+                  <tbody>
+                      <tr *ngFor="let cam of cameras" style="border:none;">
+                          <td>
+                              <a class="listContent btn-link center"  (click)="getRawImage(cam._id,cam.streamingUrl)">{{cam.deviceName}}</a>
+                          </td>
+                          <td>
+        
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+          <div class="row">
+              <label class="text" for="rawImage">Camera view</label>
+              <img style="width:200px; height:150px;margin: 0 auto;" [src]="domSanitizer.bypassSecurityTrustUrl(thumbnail)" *ngIf="thumbnailImg">
+          </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+.background{
+    border: 1px solid #e7e7e7;
+    min-height: 70vh;
+    background-color: white;
+    padding:0%;
+    border: none;
+    border-radius: 5px;
+}
+
+.addcamera{
+    color:white;
+}
+
+.noFloorPlan{
+    margin-top: 10%;
+}
+.logo{
+    margin:0 auto;
+    display:block;
+}
+.nofloormaps{
+    text-align:center;
+    font-size: 18px;
+    color: rgba(163, 162, 162, 1);
+}
+
+.scrollable{
+    margin-top: 2%;
+    overflow-y: scroll;
+    height:65vh;
+}
+
+.notify{
+    margin: 1% 1%;
+}
+.notifyHead{
+    font-size: 15px;
+    color: rgba(53, 53, 53, 1);
+}
+
+.notifyDate{
+    font-size: 14px;
+    color: rgba(163, 162, 162, 1);
+}
+.messageunread{
+    cursor: pointer;
+    background-color:  rgba(216, 246, 230, 1);
+}
+.messageread:hover{
+    cursor: pointer;
+    background-color:rgb(245,245,245);
+}

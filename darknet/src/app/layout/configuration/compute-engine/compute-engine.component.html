@@ -1,0 +1,99 @@
+<div class="cameraList">
+        <div class="col-sm-12">
+          <br>
+          <div class="row cameratext">
+              <div class="addcamera">
+           
+              </div>          
+              <div class="camerasDiv">
+                <button type="button" class="btn btn-default btn-sm" id="addCamera" (click)="UpdateCompEngine()" data-toggle="modal" data-target="#myModal">
+                  Add ComputeEngine
+                </button>
+              </div>
+          </div>
+          <br>
+            <div class="row cameralistdiv">
+                <P>White listed compute engines</P>
+                <div class="col-sm-12" *ngFor="let comp of computeengines">
+                      <div class="lawngreen">
+                          <div class="row">
+                              <div class="col-sm-11 col-xs-10">
+                                  <a class="listContent btn-link center">{{comp.deviceName}}</a>
+                              </div>
+                              <div class="col-sm-1 col-xs-2">
+                                  <a (click)="compRemove(comp._id)">
+                                      <span class="glyphicon glyphicon-trash"></span>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                </div>
+            </div>
+            <div class="row cameralistdiv">
+                    <P>Non white listed compute engines</P>
+                <div class="col-sm-12" *ngFor="let comp of computeengines2">
+                      <div class="lawngreen">
+                          <div class="row">
+                              <div class="col-sm-11 col-xs-10">
+                                  <a class="listContent btn-link center">{{comp.deviceName}}</a>
+                              </div>
+                              <div class="col-sm-1 col-xs-2">
+                                  <a (click)="compRemove(comp._id)">
+                                      <span class="glyphicon glyphicon-trash"></span>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+      <div class="modal fade" id="myModal" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.7)">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Compute Engine</h4>
+              </div>
+              <div class="modal-body"  style="padding:1%;">
+                  <form class="form" id="myForm">
+                      <br>
+                      <div class="form-group">
+                            <label class="text" for="deviceName">Compute Engine Type</label>
+                            <select id="compType " data-style="btn-info" class="form-control listcam" [(ngModel)]="compType" name="compType"
+                            (change)="onChange($event.target.value)"> 
+                                <option value="other">new</option>
+                                <option value={{comp._id}} *ngFor="let comp of computeengines1" >{{comp.deviceName}}</option>
+                            </select>
+                      </div>
+
+                      <div class="form-group">
+                              <label class="text" for="deviceName">Compute Engine Name</label>
+                              <input type="text" class="form-control listcam" id="aggrName" placeholder="Enter unique compute engine name" [(ngModel)]="compName" name="compName" required>
+                      </div>
+      
+                      <div class="form-group">
+                              <label class="text" for="channelId">Device Type</label>
+                              <input type="text" class="form-control listcam" id="channelId" [(ngModel)]="deviceType" placeholder="Enter device type" name="deviceType" required>
+                      </div>
+      
+
+                      <div class="form-group">
+                            <label class="text" for="macId">MAC Address</label>
+                            <input type="text" class="form-control listcam" id="macId" [(ngModel)]="macId" name= "macId" placeholder="Enter MAC address">
+                      </div>
+
+                      <div class="form-group ">
+                            <label class="text" for="ipAddress">IP Address</label>
+                            <input type="text" class="form-control listcam" id="ipAddress" [(ngModel)]="ipAddress" name= "ipAddress" placeholder="Enter IP address">
+                      </div>
+                  </form>
+          <div class="modal-footer">
+                  
+                      <button type="submit" class="btn submitButton" (click)="PushCompData()" size="8" data-dismiss="modal"
+                              data-toggle="modal" data-target="#myModal1">Submit</button>
+           
+          </div>
+        </div>
+      

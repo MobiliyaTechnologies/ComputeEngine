@@ -1,0 +1,120 @@
+.btn-link{
+    color: black;
+}
+.grayColor{
+    color: gray;
+}
+
+button:hover
+{
+    background-color:#00A86B;
+    color:white;
+}
+
+.aggregatorlistClick{
+    background-color:  rgba(216, 246, 230, 1);
+}
+
+.background{
+    border: 1px solid #e7e7e7;
+    min-height: 70vh;
+    background-color: white;
+    padding:0%;
+    border: none;
+    border-radius: 5px;
+}
+
+.aggregatorListSection{
+    background-color: #F5F5F5;
+}
+
+.text{
+    font-size: 12px;
+    color: rgba(118, 118, 118, 1);
+}
+
+.listMargin{
+    margin-top: 3%;
+    padding:0%;
+}
+.aggregatorList{
+    border-top: 1px solid lightgray;
+}
+.cameraList{
+    overflow-y: scroll;
+    height:64vh;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    
+    background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+.addaggregator{
+    float:left;
+    color:white;
+}
+.scrollable{
+    overflow-y: scroll;
+    height:65vh;
+}
+.tableData{
+    border:none;
+}
+.aggregatorsDiv{
+    float:right;
+}
+
+a:hover{
+    cursor:pointer;
+}
+
+.inner-addon {
+    position: relative;
+    width: 90%;
+    margin: 2% auto;
+  }
+  
+  /* style glyph */
+  .inner-addon .glyphicon {
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+  }
+  
+  /* align glyph */
+  .left-addon .glyphicon  { left:  0px;}
+
+  
+  /* add padding  */
+  .left-addon input  { padding-left:  30px; }
+ 
+ 
+  @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    .scrollable{
+        overflow-y: none;
+        
+    }
+}
+.ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948;
+}
+.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442;
+}
+
+.overflow-text{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}

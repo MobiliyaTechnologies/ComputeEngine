@@ -1,0 +1,204 @@
+<div class="container-fluid ">
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+  <div class="row">
+    <div class="addaggregator">
+      <h5>Aggregator</h5>
+    </div>
+    <div class="aggregatorsDiv">
+      <button type="button" class="btn btn-default btn-sm" id="addAggregator" (click)="navigateToAddAggregator()">
+        ADD AGGREGATOR
+      </button>
+    </div>
+  </div>
+
+  <form class="form" id="myForm" #AggregatorForm="ngForm">
+    <div class="row background" *ngIf="!isAggregator">
+      <div class="col-sm-12 cameraData">
+        <div class="col-sm-12">
+          <br>
+          <div class="row">
+            <div class="col-sm-6 col-xs-12 overflow-text">
+              <div class="form-group">
+                <p>
+                  <b>AGGREGATOR NAME</b>
+                </p>
+                <input type="text" class="form-control " id="aggregatorName" [(ngModel)]="aggregatorName" name="aggregatorName" required>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 overflow-text">
+              <div class="form-group">
+                <p>
+                  <b>LOCATION</b>
+                </p>
+                <input type="text" class="form-control " id="aggregatorLocation" [(ngModel)]="aggregatorLocation" name="aggregatorLocation"
+                  required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-6 col-xs-12 overflow-text">
+              <div class="form-group">
+                <p>
+                  <b>MAC ADDRESS</b>
+                </p>
+                <input type="text" class="form-control " id="aggregatorMacId" [(ngModel)]="aggregatorMacId" name="aggregatorMacId" required>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 overflow-text">
+              <div class="form-group">
+                <p>
+                  <b>IP ADDRESS</b>
+                </p>
+                <input type="text" class="form-control " id="aggregatorIpAddress" [(ngModel)]="aggregatorIpAddress" name="aggregatorIpAddress"
+                  required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-6 col-xs-12 overflow-text">
+              <div class="form-group">
+                <p>
+                  <b>STREAMING URL</b>
+                </p>
+                <input type="text" class="form-control " id="aggregatorUrl" [(ngModel)]="aggregatorUrl" name="aggregatorUrl" required>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 overflow-text">
+              <div class="form-group">
+                <p>
+                  <b>CHANNEL ID</b>
+                </p>
+                <input type="text" class="form-control " id="aggregatorChannelId" [(ngModel)]="aggregatorChannelId" name="aggregatorChannelId"
+                  required>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-12">
+              <button type="button" class="btn btn-default btn-sm" id="addAggregator" [disabled]="!AggregatorForm.form.valid" (click)="addAggregator()">
+                SAVE
+              </button>
+              <button type="button" class="btn btn-default btn-sm" id="cancel" (click)="cancel()">
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+
+  <div class="row background" *ngIf="isAggregator">
+    <div class="col-sm-4 aggregatorListSection">
+      <div class="row ">
+        <div class="inner-addon left-addon">
+          <i class="glyphicon glyphicon-search"></i>
+          <input type="text" class="form-control" placeholder="Search" (ngModelChange)="filterAggregators($event)" [ngModel]="substring"
+          />
+        </div>
+      </div>
+      <br>
+      <div class="row cameraList">
+        <div class="col-sm-12">
+          <div class="col-sm-12 aggregatorList items aggregator overflow-text" *ngFor="let aggr of aggregators let selIndex = index"
+           [ngClass]="(selectedIndex == selIndex)?'aggregatorlistClick':''" (click)="getAggregatorDetails(aggr, selIndex)">
+            <div class="col-sm-11 col-xs-8 listMargin ">
+              <a class="listContent btn-link center">{{aggr.deviceName}}</a>
+              <p class="grayColor">{{aggr.location}}</p>
+            </div>
+            <div class="col-sm-1 col-xs-4 listMargin">
+              <span id="{{aggr._id}}" *ngIf="aggr.status === 2">
+                <img src="../../../../assets/img/logos/checkmark.png">
+              </span>
+              <span id="{{aggr.c_id}}" *ngIf="aggr.status === 1 || aggr.status === 0">
+                <img src="../../../../assets/img/logos/alert.png">
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-8 cameraData">
+      <div class="col-sm-12" *ngIf="aggregatorDetails">
+        <br>
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>AGGREGATOR NAME</b>
+            </p>
+            <span *ngIf='!isEdit'>{{aggregatorDetails.name}}</span>
+            <input *ngIf='isEdit' type="text" class="form-control " id="aggregatorName" [(ngModel)]="aggregatorDetails.name" name="aggregatorName"
+              required>
+          </div>
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>LOCATION</b>
+            </p>
+            <span *ngIf='!isEdit'>{{aggregatorDetails.location}}</span>
+            <input *ngIf='isEdit' type="text" class="form-control " id="aggregatorLocation" [(ngModel)]="aggregatorDetails.location"
+              name="aggregatorLocation" required>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>MAC ADDRESS</b>
+            </p>
+            <span>{{aggregatorDetails.macId}}</span>
+          </div>
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>IP ADDRESS</b>
+            </p>
+            <span>{{aggregatorDetails.ipAddress}}</span>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>STREAMING URL</b>
+            </p>
+            <span>{{aggregatorDetails.url}}</span>
+          </div>
+          <div class="col-sm-6 col-xs-12">
+            <p>
+              <b>CHANNEL ID</b>
+            </p>
+            <span>{{aggregatorDetails.channelId}}</span>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-12 col-xs-12">
+            <button type="button" class="btn btn-default btn-sm" id="editAggregator" (click)="navigateToupdateAggregator()" *ngIf='!isEdit'>
+              EDIT
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="saveAggregator" (click)="updateAggregator(aggregatorDetails)" *ngIf='isEdit'>
+              SAVE
+            </button>
+            <!-- </div>
+          <div> -->
+            <button type="button" class="btn btn-default btn-sm" id="remove" (click)="removeAggregator(aggregatorDetails)" *ngIf='!isEdit && aggregatorDetails.status === 2'>
+              REMOVE
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="keep" (click)="whitelistAggregator(aggregatorDetails)" *ngIf='!isEdit && (aggregatorDetails.status === 0 || aggregatorDetails.status === 1)'>
+              KEEP
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="cancel" (click)="cancel()" *ngIf='isEdit'>
+              CANCEL
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="delete" (click)="deleteAggr(aggregatorDetails)">
+              DELETE
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

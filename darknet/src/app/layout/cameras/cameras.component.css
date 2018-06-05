@@ -1,0 +1,68 @@
+.background{
+    border: 1px solid #e7e7e7;
+    min-height: 70vh;
+    background-color: white;
+    padding:0%;
+}
+.cameraList{
+    padding:2%;
+}
+.cameralistdiv{
+    overflow-y: scroll;
+    height:40vh;
+}
+.cameratext{
+    /* padding:2%; */
+    width: 100%;
+    display: inline-block;
+}
+.addcamera{
+    float:left;
+}
+.camerasDiv{
+    float:right;
+}
+.lawngreen{
+    margin-top: 1%;
+    padding-top:1%;
+    padding-bottom:1%;
+    padding-left: 2%;
+    border:1px solid #191919;
+    background-color:lawngreen;
+}
+.gray{
+    margin-top: 1%;
+    padding-top:1%;
+    padding-bottom:1%;
+    padding-left: 2%;
+    background-color:white;
+    border:1px solid #191919;
+}
+.form{
+    margin: 0% 2%;
+}
+.form-control{
+    background-color: #fff4e4;
+}
+.listcam{
+    border: 1px solid #191919;
+}
+.img-responsive{
+    display: block;
+    width: auto;
+    height: 100%;
+    margin: 0 auto;
+    border: 0;
+}
+.container {
+    display: table-cell;
+    vertical-align: middle;
+    margin: 0 auto;
+    padding: 0;
+}
+.advance{
+    text-align: center;
+}
+.form-group{
+    margin-bottom: 5px;
+}

@@ -1,0 +1,24 @@
+<div class="container-fluid">
+
+         <!-- <navbar-cmp></navbar-cmp> -->
+           <navbarslider></navbarslider>
+
+  <div class="row homepage">
+    <h4>Welcome {{user.name}}!</h4>
+    <p>You can start viewing the camera data once you connect your camera.</p>
+  </div>
+  
+  <div class="row background card">
+    <div class="cameraConnect">
+      <div class="textCenter">
+        <img src="../../assets/img/GIFS/camdisConnect.gif"><br>
+        <div class="text2">No camera connected</div>
+      </div>
+      <button type="submit" class="btn btn-primary connectCamButton"  (click)="connectCamera()">
+          CONNECT YOUR CAMERA NOW
+      </button>
+    </div>
+  </div>
+</div>
+
+

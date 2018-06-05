@@ -1,0 +1,187 @@
+<div class="container-fluid ">
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+  <div class="row">
+    <div class="addcamera">
+      <h5>Connected Camera</h5>
+    </div>
+    <div class="camerasDiv">
+
+      <button type="submit" class="btn btn-primary" id="connectCamera" (click)="connectCamera()"> CONNECT CAMERA </button>
+
+    </div>
+  </div>
+
+  <div class="row background">
+    <div class="col-sm-4 cameraListSection">
+      <br>
+      <div class="row">
+        <div class="col-sm-12">
+          <label class="text" for="rawImage">Group By</label>
+          <br>
+          <label class="text">
+            <input type="radio" name="optradio" checked="checked" value="aggregator" (change)="onChangeRadio($event.target.value)">Aggregators</label>
+          <label class="text">
+            <input type="radio" name="optradio" value="feature" (change)="onChangeRadio($event.target.value)">Feature</label>
+        </div>
+      </div>
+      <div class="row ">
+        <!-- <input type="search" id="mySearch" name="q"> -->
+        <div class="inner-addon left-addon">
+          <i class="glyphicon glyphicon-search"></i>
+          <input type="text" class="form-control" placeholder="Search" (ngModelChange)="filterCameras($event)" [ngModel]="substring"
+          />
+        </div>
+      </div>
+      <div class="row cameraList">
+        <div class="col-sm-12" *ngFor="let cam of cameras let AggrIndex = index">
+          <br>
+          <p class="filterValue">{{cam.filter}}</p>
+          <div class="col-sm-12 camList overflow-text" *ngFor="let cam1 of cam.cameras let CamIndex = index"
+          [ngClass]="((selectedCamIndex == CamIndex) && (selectedAggrIndex == AggrIndex))?'CamlistClick':''"  (click)="getCameraDetails(cam1, AggrIndex, CamIndex)">
+            <div class="col-sm-10 col-xs-8 listMargin">
+              <a class="listContent btn-link center">{{cam1.deviceName}}</a>
+              <p class="grayColor">{{cam1.location}}</p>
+            </div>
+            <div class="col-sm-2 col-xs-4 listMargin">
+              <!-- <span id="{{cam1.camId}}" class="	glyphicon glyphicon-facetime-video" style="color:rgba(238, 48, 53, 1)" *ngIf="cam1.status === '0'" ></span>
+                    <span id="{{cam1.camId}}" class="	glyphicon glyphicon-facetime-video" style="color:rgba(43, 212, 123, 1)" *ngIf="cam1.status === '1'" ></span>     -->
+              <span id="{{cam1.camId}}" *ngIf="cam1.status === '0'">
+                <img src="../../../../assets/img/logos/offline.png">
+              </span>
+              <span id="{{cam1.camId}}" *ngIf="cam1.status === '1'">
+                <img src="../../../../assets/img/logos/online.png">
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-8" *ngIf="!cameraDetailflag">
+      <p style="text-align:center; 
+      vertical-align: middle;">No camera preview</p>
+    </div>
+    <div class="col-sm-8 cameraData" *ngIf="cameraDetailflag">
+      <div class="row scrollable">
+        <div class="col-sm-12">
+          <div class="row">
+            <div class="col-sm-12 overflow-text">
+              <h5>{{deviceName}}</h5>
+              <p>
+                <b>Streaming Url</b>
+              </p>
+              <span>{{streamingUrl}}</span>
+            </div>
+          </div>
+
+          <div class="row ImageDivRow">
+            <div class="col-sm-12 col-xs-12 ImageDivCol">
+              <div id="imageDiv" class="imageDiv">
+                <img class="cameraPreview" [src]="domSanitizer.bypassSecurityTrustUrl(previewSrc)">
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-6 col-xs-12">
+              <p>
+                <b>Device Type</b>
+              </p>
+              <span>{{deviceType}}</span>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+              <p>
+                <b>Floor Map</b>
+              </p>
+              <span>{{location}}</span>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-6 col-xs-12 overflow-text">
+              <p>
+                <b>Aggregator</b>
+              </p>
+              <span>{{aggregatorName}}</span>
+            </div>
+            <div class="col-sm-6 col-xs-12 overflow-text">
+              <p>
+                <b>Compute Engine</b>
+              </p>
+              <span>{{computeEngineName}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-12">
+          <div *ngIf="(camStatus === '1'); else notStreaming">
+            <button type="submit" class="btn btn-primary" disabled>EDIT</button>
+            <button type="submit" class="btn btn-primary" disabled>DELETE</button>
+            <button *ngIf="(camStatus === '1'); else notStreaming" type="submit" class="btn btn-primary" id="stopStreaming" (click)="stopCamera()">STOP STREAMING</button>
+          </div>
+          <ng-template #notStreaming>
+            <button type="submit" class="btn btn-primary" (click)="addcamera()">EDIT</button>
+            <button type="submit" class="btn btn-primary" id="removeCam" data-toggle="modal" data-target="#myModal">DELETE</button>
+            <button type="submit" class="btn btn-primary" (click)="startStreaming()">START STREAMING</button>
+          </ng-template>
+          <!-- <button type="submit" class="btn btn-primary" id="removeCam" data-toggle="modal" data-target="#myModal" *ngIf="camStatus === '0'">
+            Delete
+          </button> -->
+          <!-- <button type="submit" class="btn btn-primary" id="stopStreaming" (click)="stopCamera()" *ngIf="camStatus === '1'">
+            Stop Streaming
+          </button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- (click)="removeCam()" -->
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Remove Camera</h4>
+      </div>
+      <div class="modal-body" style="padding:2%;">
+        <div class="row">
+          <div class="col-sm-12">
+            <p class="modaltext">Are you sure you want to remove camera?</p>
+            <p class="modaltext">This will permanently delete it from the system.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="text-align:left;">
+        <button type="submit" class="btn btn-primary" (click)="removeCam()" size="8" data-dismiss="modal" data-toggle="modal" data-target="#myModal1">REMOVE</button>
+        <button type="submit" class="btn btn-primary" size="8" data-dismiss="modal" data-toggle="modal" data-target="#myModal1">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="myModalCard" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Remove Camera</h4>
+      </div>
+      <div class="modal-body" style="padding:2%;">
+        <div class="row">
+          <div class="col-sm-12">
+            <p class="modaltext">Are you sure you want to remove camera?</p>
+            <p class="modaltext">This will permanently delete it from the system.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="text-align:left;">
+        <button type="submit" class="btn submitButton" (click)="removeCam()" size="8" data-dismiss="modal" data-toggle="modal" data-target="#myModal1">REMOVE</button>
+        <button type="submit" class="btn submitButton" size="8" data-dismiss="modal" data-toggle="modal" data-target="#myModal1">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

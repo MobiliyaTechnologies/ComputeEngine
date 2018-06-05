@@ -1,0 +1,18 @@
+<div class="container-fluid devicemenu" >
+    <ul class="nav nav-tabs nav-fill nav-justified deviceul">
+    
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/layout/configuration/aggregator" [routerLinkActive]="['router-link-active']" >Aggregator</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/layout/configuration/computeEngine" [routerLinkActive]="['router-link-active']">Compute Engine</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/layout/configuration/floorMap" [routerLinkActive]="['router-link-active']">Upload Floor Map</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/layout/configuration/plotCamera" [routerLinkActive]="['router-link-active']">Plot Camera</a>
+      </li>
+    </ul>
+    <router-outlet></router-outlet>
+    </div>

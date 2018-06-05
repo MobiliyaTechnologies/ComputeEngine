@@ -1,0 +1,86 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+<br>
+<div class="textColor"> Wednesday, 28th Feb 2018 </div>
+<div *ngFor="let pdata of unknownDetails">
+  <hr>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="col-sm-2">
+        <img [src]="domSanitizer.bypassSecurityTrustUrl(pdata.userImage)" alt="" width="50%" height="50%">
+      </div>
+
+      <div class="col-sm-7" style="text-align:left;">
+        <div class="row">
+          <div class="col-sm-3">
+            <input type="text" placeholder="Name">
+          </div>
+          <div class="col-sm-1"></div>
+          <div class="col-sm-3">
+            <div class="form1">
+              <select id="gender" class="form-control" name="gender" (change)="onChangeGender($event.target.value)">
+                <option value="0" selected>Male</option>
+                <option value="1">Female</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form1">
+             <select id="age" data-style="btn-info" class="form-control" name="age" (change)="onChangeAge($event.target.value)">
+                          <option *ngFor="let personage of age;" value="{{personage.age}}">{{personage.age}}</option>
+             </select> 
+            </div>
+          </div>
+        </div>
+
+
+        <br> {{ pdata.deviceName }} at 10.45 AM <br><br>
+
+        <button type="submit" class="btn btn-primary" id="save" (click)="save()"> Save </button>
+        <button type="submit" class="btn btn-primary" (click)="removeRecord()" size="8" data-dismiss="modal" data-toggle="modal"
+          data-target="#removeModal">Delete</button>
+      </div>
+      <div class="col-sm-3" style="float:right;">
+        <img [src]="domSanitizer.bypassSecurityTrustUrl(pdata.userImage)" alt="" width="60%" height="30%" style="float:right;">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 
+          <div class="col-sm-3">
+      <img [src]="domSanitizer.bypassSecurityTrustUrl(pdata.userImage)" alt="" width="50%" height="50%">
+    </div>
+    <div class="col-sm-9" style="text-align:left;">
+      <div class="row">
+        <div class="col-sm-2">
+          <input type="text" placeholder="Name">
+        </div>
+        <div class="col-sm-2">
+          <div class="form1">
+             <select id="gender" class="form-control" name="gender" (change)="onChangeGender($event.target.value)">
+            <option value="0" selected>Male</option>
+            <option value="1">Female</option>
+          </select> 
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form1">
+              <select id="age" data-style="btn-info" class="form-control" name="age" (change)="onChangeAge($event.target.value)">
+                          <option *ngFor="let personage of age;" value="{{personage.age}}">{{personage.age}}</option>
+             </select> 
+          </div>
+        </div>
+        <div class="col-sm-2">
+           <img [src]="domSanitizer.bypassSecurityTrustUrl(pdata.userImage)" alt="" width="50%" height="50%">
+        </div>
+        
+      </div>
+
+    {{ pdata.deviceName }} at 10.45 AM <br><br>
+
+      <button type="submit" class="btn btn-primary" id="save" (click)="save()"> Save </button>
+      <button type="submit" class="btn btn-primary" (click)="removeRecord()" size="8" data-dismiss="modal" data-toggle="modal"
+        data-target="#removeModal">Delete</button>
+    </div> -->

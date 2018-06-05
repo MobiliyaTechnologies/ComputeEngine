@@ -1,0 +1,74 @@
+
+
+.background{
+    border: 1px solid #e7e7e7;
+    min-height: 60vh;
+    background-color: white;
+    padding:0%;
+    border-radius: 1%;
+    width:100%;
+    margin: 0 auto;
+}
+.scrollableDiv{
+    overflow-y: scroll;
+    height:30vh;
+}
+.floorMap{
+    width:100%;
+    height: 40vh;
+    border:1px dotted  rgba(213, 217, 223, 1); 
+}
+.plan{
+    margin-top:6%;
+}
+.logo{
+    margin:0 auto;
+    display:block;
+}
+.nofloormaps{
+    text-align:center;
+}
+.floorMapImage{
+    width:100%;
+    height:100%;
+}
+.dragcameraList{
+    font-family: 'Proxima Nova';
+    font-size: 16px;
+    color: rgba(163, 162, 162, 1);
+}
+.glyphicon-facetime-video{
+    font-size: 20px;
+    color:gray;
+}
+.cameraList{
+    background-color:  rgb(229, 233, 242);
+    padding: 4%;
+    margin-bottom: 1%;
+    border-radius: 5px;
+}
+
+.col-sm-12{
+    position: inherit;
+}
+.table1{
+    width: 90%;
+    margin: 0px auto;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+

@@ -1,0 +1,99 @@
+<div class="container-fluid ">
+    <div class="row">
+        <div class="addcamera">
+            <h5 class="text">{{camName}}</h5>
+        </div>
+    </div>
+    <div class="row devicemenu">
+        <div class="col-sm-8 ">
+            <br>
+            <div class="col-sm-12 card1">
+                <div class="buttonOptions">
+                    <button type="submit" class="btn btn-primary" (click)="backPage()">
+                        BACK
+                    </button>
+                </div>
+                <div class="live-image-div" id="canvas">
+                    <img class="live-image" id="live_image" [src]="domSanitizer.bypassSecurityTrustUrl(imgSrc)">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-4 results">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5>Information</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12">
+                            <div class="row textHeadings">
+                                <p>
+                                    <b>LOCATION</b>
+                                </p>
+                            </div>
+                            <div class="row textValues">
+                                {{locationName}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12">
+                            <div class="row textHeadings">
+                                <div *ngIf="featureName == 'humanDetection' else nodisplay">
+                                    <p>
+                                        <b>PERSON COUNT</b>
+                                    </p>
+                                </div>
+                                <div *ngIf="featureName == 'objectDetection' else nodisplay">
+                                    <p>
+                                        <b>OBJECT COUNT</b>
+                                    </p>
+                                </div>
+                                <div *ngIf="(featureName == 'faceDetection' || featureName == 'faceRecognition') else nodisplay">
+                                    <p>
+                                        <b>FACE COUNT</b>
+                                    </p>
+                                </div>
+                                <ng-template #nodisplay></ng-template>
+                            </div>
+                            <div class="row textValues">
+                                {{result}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12">
+                            <div class="row textHeadings">
+                                <p>
+                                    <b>COUNT PER MARKER</b>
+                                </p>
+                            </div>
+                            <div *ngFor="let marker of markerDisplay">
+                                <div class="row textValues">
+                                    {{marker.markerName}} : {{marker.count}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <button type="submit" class="btn btn-primary" style="width:100%;" (click)="stopCamera()">
+                    STOP STREAMING
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

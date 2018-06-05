@@ -1,0 +1,4 @@
+.scrollableDiv{
+    overflow-y: scroll;
+    height:35vh;
+}

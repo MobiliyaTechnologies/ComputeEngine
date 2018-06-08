@@ -42,14 +42,14 @@ config.JetsonRegistrationURL = config.host + "/devices/computeengines";
 config.registerAlgorithm = config.host + "/devices/computeengines/algorithm";
 
 //Folder paths
-config.jetsondlFolderPath = '/home/nvidia/Compute-Engine-Yolo/';
+config.jetsondlFolderPath = '/home/nvidia/ComputeEngine/';
 config.CamerasFolderPath = 'darknet/Cameras';
 config.camFolder = config.jetsondlFolderPath + config.CamerasFolderPath;
 config.livestreamingCamFolder = config.camFolder + '/Cam';
 
 config.DLmodel = config.jetsondlFolderPath + 'darknet/';
 config.stopCamera = './stopCamera.py';
-config.jetsonImagePath = "nvidia@10.9.43.76:/home/nvidia/Compute-Engine-Yolo/darknet/Cameras/Cam";
+config.jetsonImagePath = "nvidia@"+config.IP+":/home/nvidia/ComputeEngine/darknet/Cameras/Cam";
 
 config.darknetDetectArg = 'detect';
 config.darknetDetectorArg = 'detector';

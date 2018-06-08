@@ -23,7 +23,7 @@ config.iotHub = {
 /**
  * Backend configuration
  */
-config.host = "<backendURL>;	      
+config.host = "<backendURL>";	      
 
 //Folder path to store input images
 config.jetsonImagePath = "NOFolderPathNeededForDemokit";
@@ -43,7 +43,7 @@ config.detectionAlgorithms = [{
 config.sendDetectionResultUrl = config.host + "/results";
 config.JetsonRegistrationURL = config.host + "/devices/computeengines";
 config.registerAlgorithm = config.host + "/devices/computeengines/algorithm";
-config.jetsondlFolderPath = '/home/nvidia/Compute-Engine-Yolo/';
+config.jetsondlFolderPath = '/home/nvidia/ComputeEngine/';
 config.CamerasFolderPath = 'darknet/Cameras';
 config.camFolder = config.jetsondlFolderPath + config.CamerasFolderPath;
 config.livestreamingCamFolder = config.camFolder + '/Cam';

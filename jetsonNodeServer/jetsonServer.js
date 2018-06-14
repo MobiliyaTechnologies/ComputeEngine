@@ -1,23 +1,18 @@
 var config = require('./settings');
 var app = require('express')();
 var bodyParser = require('body-parser');
-var mqtt = require('mqtt');
 var fs = require('fs');
-var path = require('path');
 var parseJson = require('parse-json');
-var PythonShell = require('python-shell');
-var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
-var Type = require('type-of-is');
 var mkdirp = require('mkdirp');
-var mqtt = require('mqtt');
 var serial = require('node-serial-key');
 var ip = require("ip");
 var request = require("request");
-var ps = require('ps-node');
 var iothub = require('azure-iothub');
+
 var connectionString = config.iotHub.connectionString;
 var registry = iothub.Registry.fromConnectionString(connectionString);
+
 var client;
 var clientFromConnectionString = require('azure-iot-device-mqtt').clientFromConnectionString;
 var Message = require('azure-iot-device').Message;
@@ -128,15 +123,14 @@ serial.getSerial(function (err, value) {
                     //console.log(err.toString());
                     registry.get(device.deviceId, function (err, deviceInfo, res) {
                         console.log("Device Already Registered");
-                        var deviceConnectionString = "HostName=snsiothub.azure-devices.net;DeviceId=" + deviceInfo.deviceId + ";SharedAccessKey=" + deviceInfo.authentication.symmetricKey.primaryKey;
+                        var deviceConnectionString = config.iotHub.connectionString.split(';')[0] + ";DeviceId=" + deviceInfo.deviceId + ";SharedAccessKey=" + deviceInfo.authentication.symmetricKey.primaryKey;
                         messageHandling(deviceConnectionString);
                     });
                 }
 
                 if (res) console.log(' status: ' + res.statusCode + ' ' + res.statusMessage);
                 if (deviceInfo) {
-                    var deviceConnectionString = "HostName=snsiothub.azure-devices.net;DeviceId=" + deviceInfo.deviceId + ";SharedAccessKey=" + deviceInfo.authentication.symmetricKey.primaryKey;
-                    //MQTT Topic subcription call
+                    var deviceConnectionString = config.iotHub.connectionString.split(';')[0] + ";DeviceId=" + deviceInfo.deviceId + ";SharedAccessKey=" + deviceInfo.authentication.symmetricKey.primaryKey;
                     messageHandling(deviceConnectionString);
                 }
             });
@@ -208,7 +202,7 @@ var messageHandling = function (deviceConnectionString) {
         switch (topic) {
             case '/':
                 {
-                    console.log("MQTT==================Project Heimdall Server Available to Respond!!\n-----------------------------------\n");
+                    console.log("IOTHUB==================Project Heimdall Server Available to Respond!!\n-----------------------------------\n");
                     break;
                 }
             case "startStreaming":
@@ -222,7 +216,7 @@ var messageHandling = function (deviceConnectionString) {
                         console.log("Checking if same camera is already spawned! : ", msg);
                         boundingBox(sendData, function (error) {
                             if (!error)
-                                console.log("MQTT==================Create configuration files, and spawn DL model Done!!==========================\n");
+                                console.log("IOTHUB==================Create configuration files, and spawn DL model Done!!==========================\n");
                             else
                                 console.log("Error Message : Error in Starting Process!");
                         });

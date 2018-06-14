@@ -4,13 +4,13 @@
 var config = {};
 
 config.port = 5001;
-config.IP = "<IPAddress>";
 config.name = "JetsonComputeEngine";
 config.deviceType = "Jetson-TX2";
 config.cameraSupported = 3;
 config.location = "<Location>";
 config.wayToCommunicate = "rsync";
 config.pingInterval = 900000;
+config.IP = "<IPAddress>";
 
 /**
  * IOT hub configuration
@@ -22,7 +22,7 @@ config.iotHub = {
 /**
  * Backend configuration
  */
-config.host = "<backendUrl>"; 
+config.host = "<backendUrl>";
 //_________________________Configuration Done _____________________________________
 
 config.detectionAlgorithms = [{

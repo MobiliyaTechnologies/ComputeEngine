@@ -22,7 +22,7 @@ config.iotHub = {
 /**
  * Backend configuration
  */
-config.host = "backendUrl"; 
+config.host = "<backendUrl>"; 
 //_________________________Configuration Done _____________________________________
 
 config.detectionAlgorithms = [{

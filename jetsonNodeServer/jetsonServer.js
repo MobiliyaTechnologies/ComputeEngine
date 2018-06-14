@@ -116,14 +116,14 @@ serial.getSerial(function (err, value) {
                     console.log(err.toString());
                     registry.get(device.deviceId, function (err, deviceInfo, res) {
                         console.log("Device Already Registered");
-                        var deviceConnectionString = "HostName=snsiothub.azure-devices.net;DeviceId=" + deviceInfo.deviceId + ";SharedAccessKey=" + deviceInfo.authentication.symmetricKey.primaryKey;
+                        var deviceConnectionString = config.iotHub.connectionString.split(';')[0] + ";DeviceId=" + deviceInfo.deviceId + ";SharedAccessKey=" + deviceInfo.authentication.symmetricKey.primaryKey;
                         messageHandling(deviceConnectionString);
                     });
                 }
 
                 if (res) console.log(' status: ' + res.statusCode + ' ' + res.statusMessage);
                 if (deviceInfo) {
-                    var deviceConnectionString = "HostName=snsiothub.azure-devices.net;DeviceId=" + deviceInfo.deviceId + ";SharedAccessKey=" + deviceInfo.authentication.symmetricKey.primaryKey;
+                    var deviceConnectionString = config.iotHub.connectionString.split(';')[0] + ";DeviceId=" + deviceInfo.deviceId + ";SharedAccessKey=" + deviceInfo.authentication.symmetricKey.primaryKey;
                     //MQTT Topic subcription call
                     messageHandling(deviceConnectionString);
                 }

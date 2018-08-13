@@ -1,4 +1,4 @@
-
+#include "darknet.h"
 #include <sys/inotify.h>
 #include <string.h>
 #include <unistd.h>
@@ -37,7 +37,7 @@ char **names;
 image **alphabet;
 float thresh;
 float hier_thresh;
-//char ch_filename[500];
+char ch_filename[500];
 int num_bbox;
 char *sendResultURL;
 char *userId;
@@ -811,19 +811,28 @@ void* threadFunc(void* final_bounding_boxes_aoiid)
     double time;
     float nms=.3;
 
-    IplImage *localCopySource;//Used as every thread will be rading same source image
+    IplImage *localCopySource, *localCopySourceTwo;
+    image croppedImage;
     
     //Objects to be detected array
     for (int i = 0; i<my_data->num_objects; i++)
     {
         objectsArray[i] = my_data->objects[i];
     }
+
     localCopySource = cvCreateImage(cvGetSize(globalSourceImageData.globalSource), globalSourceImageData.globalSource->depth, globalSourceImageData.globalSource->nChannels);   
     cvCopy(globalSourceImageData.globalSource, localCopySource, NULL);
-	
+    /*globalSourceImageData.localCopySourceTwo = cvCreateImage(cvGetSize(globalSourceImageData.globalSource), globalSourceImageData.globalSource->depth, globalSourceImageData.globalSource->nChannels);
+	cvCopy(globalSourceImageData.globalSource, globalSourceImageData.localCopySourceTwo, NULL);*/
+
     //Crop the image as per BBOX return "image" im Cropped Image
     image im = load_image_cv_heimdall(localCopySource, 3, my_data->bounding_boxes,  my_data->shape, my_data->direction, my_data->width, my_data->height);
 			
+/*
+    input = my_data->filename;
+    
+    image im = load_image_color_heimdall(input,0,0, my_data->bounding_boxes, my_data->shape, my_data->direction, my_data->width, my_data->height);
+*/
     //Resizing image as per network specifications
     image sized = letterbox_image(im, net[t]->w, net[t]->h);
 
@@ -841,7 +850,7 @@ void* threadFunc(void* final_bounding_boxes_aoiid)
 
     //Pass image image data to process
     network_predict(net[t], X);
-    //printf("\n\nDetection completed on Image ! [ %s ] \n Predicted in [%f] seconds.\n in Thread [%d]\n\n", input, what_time_is_it_now()-time,t);
+    printf("\n\nDetection completed on Image ! [ %s ] \n Predicted in [%f] seconds.\n in Thread [%d]\n\n", input, what_time_is_it_now()-time,t);
 
     //TODO - Calculate time for this, what these two functions does
     get_region_boxes(l[t], im.w, im.h, net[t]->w, net[t]->h, thresh, probs, boxes, masks, 0, 0, 
@@ -850,72 +859,70 @@ void* threadFunc(void* final_bounding_boxes_aoiid)
         do_nms_sort(boxes, probs, l[t].w*l[t].h*l[t].n, l[t].classes, nms);
 
     //Now, we have bounding boxes with us, Let's save results to global 
+
     draw_detections_heimdall(im, l[t].w*l[t].h*l[t].n, thresh, boxes, probs, masks, names, alphabet, 
     l[t].classes, input, num_bbox, my_data->bounding_boxes, sendResultURL, areathreshold, 
     /*my_data->aoi,*/ device_name, my_data->shape,objectsArray, my_data->num_objects, my_data->direction,
      t , my_data->tagName, my_data->markerName);
-    /*  //Use to save cropped Images with results
-    if(t == 0){
+
+    /*if(t == 0){
         save_image(im, "pred1");
     }
     else{
         save_image(im, "pred2");
-    }
-    */    
+    }*/
+    
     free_ptrs((void **)masks, l[t].coords-4);
     free_image(im);
     free_image(sized);
     free(boxes);
     free_ptrs((void **)probs, l[t].w*l[t].h*l[t].n);
+
 }
 
-//Function used to send result from darknet to Nodejs
-void* sendJsonNode(char* sendDetectionResultUrl, CURL *curl,struct curl_slist *headerlist, char* resultJson)
+void sendJsonNode(char* sendDetectionResultUrl, CURL *curl,struct curl_slist *headerlist, char* resultJson)
 {
     double startSending = what_time_is_it_now();
     CURLcode res;
-    // double speed_upload, total_time;
+    double speed_upload, total_time;
 
-    if(curl) 
-    {
+    if(curl) {
     /* upload to this place */
-        curl_easy_setopt(curl, CURLOPT_URL, sendDetectionResultUrl);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, resultJson);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(resultJson));
-        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
+            curl_easy_setopt(curl, CURLOPT_URL, sendDetectionResultUrl);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, resultJson);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(resultJson));
+            curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
 
-        /* enable verbose for easier tracing */
-        //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        /* tell it to "upload" to the URL */
-        curl_easy_setopt(curl, CURLOPT_POST, 1L);
-        res = curl_easy_perform(curl);
-        //printf("The response is ::%s",)
-        long http_code = 0;
-        curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
-        //printf("\n\n\nThe HTTP code is \n\n\n %ld",http_code);
-        /* Check for errors */
-            if(res != CURLE_OK){
-                fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
-        }
-        else {
-                //curl_easy_getinfo(curl, CURLINFO_SPEED_UPLOAD, &speed_upload);
-                //curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
-                printf("Result Sent"); 
-                //fprintf(stderr, "Speed: %.3f bytes/sec during %.3f seconds\n",speed_upload, total_time);
-                //printf("Uploading required ---------->      %lf",what_time_is_it_now()-startSending);
-        }
-        curl_easy_reset(curl);                
-	    free(resultJson);
-	}
+            /* enable verbose for easier tracing */
+            //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+            /* tell it to "upload" to the URL */
+            curl_easy_setopt(curl, CURLOPT_POST, 1L);
+            res = curl_easy_perform(curl);
+            long http_code = 0;
+            curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+            /* Check for errors */
+                if(res != CURLE_OK){
+                    fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+            }
+            else {
+                    curl_easy_getinfo(curl, CURLINFO_SPEED_UPLOAD, &speed_upload);
+                    curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
+                    //printf("\n\n Result Sent -----------------------------------------------%lf",speed_upload);
+                    fprintf(stderr, "Speed: %.3f bytes/sec during %.3f seconds\n",speed_upload, total_time);
+                    printf("Uploading required ---------->      %lf",what_time_is_it_now()-startSending);
+            }
+    }
+
+    /* always cleanup */
+    curl_easy_reset(curl);
+    //curl_easy_cleanup(curl);
 }
 
-//Not used function 
-void *fetch_in_threadDemo(void *ptr)
+void *fetch_in_thread(void *ptr)
 {
-   //while(1){
    //1. Read Image
    image notUsed; //remove this
    int imageStatus = fill_image_from_streamDemo(cap, notUsed);
@@ -923,40 +930,13 @@ void *fetch_in_threadDemo(void *ptr)
    if(!imageStatus){
 	 return 0;
     }
-//   }
     return 0;
 }
 
-//return 0 if failed to open stream
-int openStream(char *streamingSource){
-    char *result = strstr(streamingSource,"webcam");
-
-    if(result != NULL){
-        int position = result - streamingSource;
-        char *camIndexString = &streamingSource[position + strlen("webcam")];
-        int cam_index;
-        sscanf(camIndexString, "%d", &cam_index); 
-        printf("\nCamIndex --> %d", cam_index);
-	cap = cvCaptureFromCAM(cam_index);
-    }
-    else
-    {
-        cap = cvCaptureFromFile(streamingSource);
-    }
-    //check if opened or not 
-    if(!cap) {
-        printf("\n\nCouldn't open the streamingSource: %s",streamingSource);
-        return 0;
-    }else{
-        printf("\nOpened the streamingSource: %s",streamingSource);
-    }
-    return 1;
-}
-
-void test_detector_heimdall(char *_datacfg, char *cfgfile, char *weightfile, float _thresh, 
-float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, char* bounding_box_params_array[10][2000],
- int canvas_width, int canvas_height, char *_userId, int img_width, int img_height, char* _deviceName, char* camID, 
- char* objectArray[10][80], int num_objects, char* feature, char* tagNameArray[10], char*  markerNameArray[10], char *streamingSource)
+void test_detector_heimdall(char *_datacfg, char *cfgfile, char *weightfile, float _thresh, float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, char* bounding_box_params_array[10][2000], int canvas_width, int canvas_height, char *_userId, int img_width, int img_height, char* _deviceName, char* camID, char* objectArray[10][80], int num_objects, char* feature, char* tagNameArray[10], char*  markerNameArray[10], char *streamingSource
+//If webcam support
+//int cam_index , int w, int h, int frames //demo.c
+)
 {
     strcat(folderPath, camID);        
     strcat(folderPath, "/");  
@@ -965,13 +945,15 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
     CURL *curl;
     struct curl_slist *headerlist=NULL;
     static const char buf[] = "Expect:";
+
+    //char userId_string[100];
     headerlist = curl_slist_append(headerlist, buf);
     headerlist= curl_slist_append(headerlist, "Accept: application/json");
     headerlist=curl_slist_append(headerlist, "Content-Type: application/json");
     headerlist=curl_slist_append(headerlist, "charsets: utf-8");
+
     curl = curl_easy_init();
 
-    //Global variables
 	thresh = _thresh;
 	hier_thresh = _hier_thresh;
 	num_bbox = _num_bbox;
@@ -984,7 +966,9 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
 	alphabet = load_alphabet();
 	device_name = _deviceName;
 
-    //Local variables
+    pthread_t detect_thread;
+    pthread_t fetch_thread;
+	char *aoiid[num_bbox];
 	char *shapeArray[num_bbox];
 	char* directionArray[num_bbox];
 	int d = 0;
@@ -993,14 +977,13 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
 	float frame_height = (float)(canvas_height);
 	float final_bounding_boxes[num_bbox][9];
     int f = 0;
+	//folderPath;	
 	int tid = 0;
 	int count = 1;
-	int i, j;
+	int j;
 	float nms=.3;
-    char ch_filename[1000];
+    double time;
     int countFrame = 1;
-    int fps;    //Video Stream fps
-	int rc;
 
     //------------------------- Bounding Box parameters parsing -------------------------
 	for (int i = 0; i< num_bbox; i++)
@@ -1018,7 +1001,7 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
 				else if(j == 5)
 				{
 					shapeArray[i] = bounding_box_params_array[i][j];
-					//printf("Shape ---------------->%s",shapeArray[i]);
+					printf("Shape ---------------->%s",shapeArray[i]);
 				}
 				else if(j == 6)
 				{
@@ -1043,12 +1026,11 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
 				}			
 		}
 	}
-    //Uncomment if want to test
 	for(int i = 0; i<num_bbox;i++)
 	{
 		for(int j = 0; j<4; j++)
 		{
-			//printf("\nBBOX = %f\n", final_bounding_boxes[i][j]);
+			printf("\nBBOX = %f\n", final_bounding_boxes[i][j]);
 		}
 	}
 
@@ -1062,91 +1044,87 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
 	}
 	tid=0;
     //------------------------- Open stream   -------------------------
-    int opened;
-    opened = openStream(streamingSource);
-
-    if(!opened){
-        return 0;
+    if(streamingSource){
+        cap = cvCaptureFromFile(streamingSource);
+        printf("\nOpened the stream");
+    }else{/*
+        cap = cvCaptureFromCAM(cam_index);
+        if(w){
+            cvSetCaptureProperty(cap, CV_CAP_PROP_FRAME_WIDTH, w);
+        }
+        if(h){
+            cvSetCaptureProperty(cap, CV_CAP_PROP_FRAME_HEIGHT, h);
+        }
+        if(frames){
+            cvSetCaptureProperty(cap, CV_CAP_PROP_FPS, frames);
+        }*/
     }
-    //Get fps of stream
-    fps = cvGetCaptureProperty(cap, 5);
-    printf("\nStream opened with :: %d",fps);
-
-    //Thread data structure holds data associated with each thread(AOIs, etc)
-    while(tid<num_bbox)
-    {
-        thread_data_array[tid].filename = "fileName";
-        thread_data_array[tid].bounding_boxes[0] = final_bounding_boxes[tid][0];
-        thread_data_array[tid].bounding_boxes[1] = final_bounding_boxes[tid][1];
-        thread_data_array[tid].bounding_boxes[2] = final_bounding_boxes[tid][2];
-        thread_data_array[tid].bounding_boxes[3] = final_bounding_boxes[tid][3];
-        thread_data_array[tid].bounding_boxes[4] = final_bounding_boxes[tid][7];
-        thread_data_array[tid].bounding_boxes[5] = final_bounding_boxes[tid][8];
-
-        thread_data_array[tid].thread_id = tid;
-        thread_data_array[tid].shape = shapeArray[tid];
-        thread_data_array[tid].tagName = tagNameArray[tid];
-        thread_data_array[tid].markerName = markerNameArray[tid];
-                        
-        if(strcmp(bounding_box_params_array[tid][5], "Line") == 0 )
-        {
-                thread_data_array[tid].direction = directionArray[tid];
-        }
-        for (int i = 0; i<num_objects;i++)
-        {
-                thread_data_array[tid].objects[i] = objectArray[tid][i];
-        }
-        thread_data_array[tid].num_objects = num_objects;
-        thread_data_array[tid].width = img_width;
-        thread_data_array[tid].height = img_height;
-
-        tid++;
+    if(!cap) {
+    //error("Couldn't open the stream:");
+    printf("\n\nstreamingSource:%s",streamingSource);
     }
 
+    if(pthread_create(&fetch_thread, 0, fetch_in_thread, 0)) error("Thread creation failed");
     //-------------------------Start Detection-------------------------
     while(1)
     {
-        //double startTime =  what_time_is_it_now(); 
+    	double startTime =  what_time_is_it_now(); 
         //1. Read Image
-        image notUsed; //remove this
-        int imageStatus = fill_image_from_streamDemo(cap, fps);
+        /*image notUsed; //remove this
+        int imageStatus = fill_image_from_streamDemo(cap, notUsed);
         if(!imageStatus){
-            opened = openStream(streamingSource);
-            if(!opened){
-                return 0;
-            }else{
-                imageStatus = fill_image_from_streamDemo(cap, fps);
-                if(!imageStatus){
-                    return 0;
-                }
-            }
-        }
-        if(countFrame > 2000){
-            countFrame = 1;
-        }
-        // double readDone =  what_time_is_it_now();
-        //printf("\nCount ===========%d",countFrame);
-        //printf("\n\nTime to read -----------------> %f ", (readDone - startTime));
-        
-        //2. So we have IplImage globalSource with us now. Write Image.
-        image drawOn = ipl_to_image(globalSourceImageData.globalSource);
-        rgbgr_image(drawOn);    
-        sprintf(ch_filename,"%s%s_%08d", folderPath, camID, countFrame);
-        save_image(drawOn, ch_filename);
-        strcat(ch_filename, ".jpg");
-        free_image(drawOn);
-	    countFrame++;
+            return 0;
+        }*/
+        double readDone =  what_time_is_it_now();
+        printf("\n\nTime to read -----------------> %f ", (readDone - startTime));
+        //So we have IplImage globalSource with us now
 
-	    //printf("\nDetection starting");	
+	    printf("\nDetection starting");	
 
+        //Intialize detection per bounding boxes to 0
+        globalSourceImageData.numberOfDetectionPerBBox[tid] = 0;
+        //Copy each bounding Box data in thread_data_array
+        while(tid<num_bbox)
+		{
+			thread_data_array[tid].filename = "fileName";
+			thread_data_array[tid].bounding_boxes[0] = final_bounding_boxes[tid][0];
+			thread_data_array[tid].bounding_boxes[1] = final_bounding_boxes[tid][1];
+			thread_data_array[tid].bounding_boxes[2] = final_bounding_boxes[tid][2];
+			thread_data_array[tid].bounding_boxes[3] = final_bounding_boxes[tid][3];
+			thread_data_array[tid].bounding_boxes[4] = final_bounding_boxes[tid][7];
+			thread_data_array[tid].bounding_boxes[5] = final_bounding_boxes[tid][8];
+
+			thread_data_array[tid].thread_id = tid;
+			thread_data_array[tid].shape = shapeArray[tid];
+			printf("\n\nShape----------------------------------,,,,");
+			thread_data_array[tid].tagName = tagNameArray[tid];
+			thread_data_array[tid].markerName = markerNameArray[tid];
+			
+            if(strcmp(bounding_box_params_array[tid][5], "Line") == 0 )
+			{
+				thread_data_array[tid].direction = directionArray[tid];
+			}
+			for (int i = 0; i<num_objects;i++)
+			{
+				thread_data_array[tid].objects[i] = objectArray[tid][i];
+			}
+			thread_data_array[tid].num_objects = num_objects;
+			thread_data_array[tid].width = img_width;
+			thread_data_array[tid].height = img_height;
+
+			tid++;
+		}
+
+		int rc;
 		void *status;
-	    // double threadDataDone = what_time_is_it_now();
-	    //printf("\n\nthreadData Done ---> %fms ", (threadDataDone - readDone));
+	
+	double threadDataDone = what_time_is_it_now();
+	printf("\n\nthreadData Done ---> %fms ", (threadDataDone - readDone));
 	
         //If successful, the pthread_create() function returns zero. 
         //Otherwise, an error number is returned to indicate the error.
-	    pthread_t threads[num_bbox];
-        //3.-------------------------Thread creation (One thread per BBOX)-------------------------
+	pthread_t threads[num_bbox];
+        //-------------------------Thread creation (One thread per BBOX)-------------------------
 		for(tid=0; tid<num_bbox; tid++){
             //printf("\nIn main: creating thread %d\n", tid);
             rc = pthread_create(&threads[tid], NULL, threadFunc, (void *) &thread_data_array[tid]);
@@ -1156,7 +1134,7 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
             }
     	}
         
-        //4.-------------------------Thread Joining-------------------------
+        //-------------------------Thread Joining-------------------------
         for(int t=0; t<num_bbox; t++) {
             rc = pthread_join(threads[t], &status);
             if (rc) {
@@ -1166,9 +1144,33 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
             //printf("Main: completed join with thread %ld having a status   of %ld\n",t,(long)status);
         }
 
-        //double timestamp = what_time_is_it_now();
+        //-------------------------Result Creation-------------------------
+        image drawOn = ipl_to_image(globalSourceImageData.globalSource);
+        rgbgr_image(drawOn);
+        
+        //Draw Results
+        /*
+        for(int threadNum = 0 ;threadNum<num_bbox ; threadNum ++){
+            for(int numberOfDetection = 0 ; numberOfDetection < globalSourceImageData.numberOfDetectionPerBBox[threadNum]; numberOfDetection++){
+                draw_box_width(drawOn, globalSourceImageData.detectedBoxes[tid][numberOfDetection][0], globalSourceImageData.detectedBoxes[tid][numberOfDetection][1],
+                globalSourceImageData.detectedBoxes[threadNum][numberOfDetection][2], globalSourceImageData.detectedBoxes[tid][numberOfDetection][3],
+                globalSourceImageData.detectedBoxes[threadNum][numberOfDetection][7], globalSourceImageData.detectedBoxes[tid][numberOfDetection][4],
+                globalSourceImageData.detectedBoxes[threadNum][numberOfDetection][5], globalSourceImageData.detectedBoxes[tid][numberOfDetection][6]);
+            }
+        }*/
+
+        double timestamp = what_time_is_it_now();
+        char ch_filename[1000];
+              
+        sprintf(ch_filename,"%s%s_%03d", folderPath, camID, countFrame);
+
+        save_image(drawOn, ch_filename);
+        strcat(ch_filename, ".jpg");
+	free_image(drawOn);
+	//cvReleaseImage(&localCopySource);
+	countFrame++;
 	
-        //4.-------------------------JSON creation-------------------------
+	//JSON creation
 		json_object *jobj[num_bbox];
 		for (int i = 0; i<num_bbox; i++)
 		{
@@ -1187,7 +1189,7 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
 			}
 			k++;
 		}
-		i = 0;
+		int i = 0;
 		while(i<num_bbox)
 		{
 			json_object *jobj_bbox_objects = json_object_new_object();
@@ -1236,16 +1238,17 @@ float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, 
 
 		//printf("\nComplete JSON to be Sent : %s\n", json_object_to_json_string(jobj_complete_json)); 
 
-        //5.-------------------------Send Result-------------------------
-       	sendJsonNode(sendResultURL, curl, headerlist, json_object_to_json_string(jobj_complete_json));
+        //-------------------------Send Result-------------------------
+       		sendJsonNode("http://localhost:5001/getresult", curl, headerlist, json_object_to_json_string(jobj_complete_json));
 
-		// double detectionDone = what_time_is_it_now();
-        // printf("\nTime requiered to process one frame === %f", detectionDone- startTime);
+		double detectionDone = what_time_is_it_now();
+		printf("\n\nthreadData DOne ---> %fms ", (detectionDone - threadDataDone));
+		// sendJson(json_object_to_json_string(jobj_complete_json),_sendResultURL);
     }
 
 }
 
-void run_detector(int num_of_bboxes,char* bounding_box_params_array[10][2000], int canvas_width, int canvas_height, int img_width,int img_height, char* streamingUrl,char* _userId,char*camId,char*sendResultURL, char* markerName[10], char* tagName[10], char * deviceName,char *folderPath)
+void run_detector(int num_of_bboxes,char* bounding_box_params_array[10][2000], int canvas_width, int canvas_height, int img_width,int img_height, char* streamingUrl,char* _userId,char*camId,char*sendResultURL, char* markerName[10], char* tagName[10], char * deviceName)
 {
     char *prefix = NULL;
     float thresh = .24;
@@ -1273,7 +1276,6 @@ void run_detector(int num_of_bboxes,char* bounding_box_params_array[10][2000], i
     int classes = option_find_int(options, "classes", 20);
     char *name_list = option_find_str(options, "names", "data/coco.names");
     char **names = get_labels(name_list);
-    demo(cfg, weights, thresh, cam_index, filename, names, classes, frame_skip, prefix, avg, hier_thresh, width, height, fps, fullscreen,num_of_bboxes, bounding_box_params_array,canvas_width,canvas_height, img_width, img_height, _userId, camId, sendResultURL, markerName, tagName, deviceName,folderPath);
+    demo(cfg, weights, thresh, cam_index, filename, names, classes, frame_skip, prefix, avg, hier_thresh, width, height, fps, fullscreen,num_of_bboxes, bounding_box_params_array,canvas_width,canvas_height, img_width, img_height, _userId, camId, sendResultURL, markerName, tagName, deviceName);
 }
-
 

@@ -4,25 +4,42 @@
 var config = {};
 
 config.port = 5001;
-config.name = "JetsonComputeEngine";
+config.name = "ComputeEngine";
 config.deviceType = "Jetson-TX2";
 config.cameraSupported = 3;
 config.location = "<Location>";
 config.wayToCommunicate = "rsync";
-config.pingInterval = 900000;
-config.IP = "<IPAddress>";
+config.pingInterval = 360000;
+config.IP = "IP of Jetson if multiple CE on one machine";
+config.appendMac = "Compute";
 
 /**
  * IOT hub configuration
  */
 config.iotHub = {
-    connectionString: '<IOTHubConnectionString>'
+    connectionString: '<IoTHubConnectionString>'
 };
 
 /**
  * Backend configuration
  */
-config.host = "<backendUrl>";
+config.host = '<backendUrl>'
+
+config.user = "/home/<username>/";
+/**
+ * Blob configurations
+ */
+config.blobConfiguration ={
+    containerName : 'mobileimg',
+    account: '<storageAccountName>',
+    accessKey: '<storageAccountAccessKey>'
+}
+
+config.blobConfiguration.baseUrl = 'https://'+ config.blobConfiguration.account +'.blob.core.windows.net/'
+
+
+config.resultsFolder = config.user + "Desktop/images"
+
 //_________________________Configuration Done _____________________________________
 
 config.detectionAlgorithms = [{
@@ -37,7 +54,7 @@ config.detectionAlgorithms = [{
 }];
 
 //Backend URLs
-config.sendDetectionResultUrl = config.host + "/results";
+config.sendDetectionResultUrl = "http://localhost:" + config.port  + "/getresult";
 config.JetsonRegistrationURL = config.host + "/devices/computeengines";
 config.registerAlgorithm = config.host + "/devices/computeengines/algorithm";
 

@@ -51,6 +51,7 @@ typedef struct
 	float track_bbox[4];
 	char* userId;
 	char* camId;
+	char *folderPath;
 	char * sendResultURL;
 	char* direction ;
 	char* shape;
@@ -75,14 +76,38 @@ void *detect_in_thread(void *data_array)
     layer l = net->layers[net->n-1];
     //float *X = buff_letter[(buff_index+2)%3].data; 	
 
+	int countFrame=0;
+	
+	CURL *curl;
+    struct curl_slist *headerlist=NULL;
+    static const char buf[] = "Expect:";
+    headerlist = curl_slist_append(headerlist, buf);
+    headerlist= curl_slist_append(headerlist, "Accept: application/json");
+    headerlist=curl_slist_append(headerlist, "Content-Type: application/json");
+    headerlist=curl_slist_append(headerlist, "charsets: utf-8");
+    curl = curl_easy_init();
 
+	strcat(thread_data->folderPath, thread_data->camId);        
+    strcat(thread_data->folderPath, "/"); 
 	while(1)
 	{
+		countFrame++;
 		image out;
+		char fileName[1000];
 		IplImage* srcImage;
 		IplImage* src;	
 		if (globalSrc) {
 			pthread_mutex_lock(&lock);
+	
+			image save_image_fs = ipl_to_image(globalSrc);
+        	rgbgr_image(save_image_fs);    
+        	sprintf(fileName,"%s%s_%08d", thread_data->folderPath, thread_data->camId, countFrame);
+
+        	save_image(save_image_fs, fileName);
+        	strcat(fileName, ".jpg");
+        	free_image(save_image_fs);
+
+
 			srcImage = cvCreateImage(cvGetSize(globalSrc), globalSrc->depth, globalSrc->nChannels);
 
 			cvCopy(globalSrc, srcImage, NULL);
@@ -93,7 +118,8 @@ void *detect_in_thread(void *data_array)
 			
 			pthread_mutex_unlock(&lock);	
 
-			out = load_image_cv_heimdall(srcImage, 3, thread_data->track_bbox, thread_data->shape, thread_data->direction, thread_data->width, thread_data->height);
+			out = load_image_cv_heimdall(srcImage, 3, thread_data->track_bbox, thread_data->shape, 
+            thread_data->direction, thread_data->width, thread_data->height);
 
 		    save_image(out, "pred1");
 			for(int i=0;i<10;i++) {
@@ -132,7 +158,7 @@ void *detect_in_thread(void *data_array)
 			if (nms > 0) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
 
 			
-			draw_detections_tracking(out, demo_detections, demo_thresh, boxes, probs, 0, demo_names, demo_alphabet, demo_classes, src, rtspUrl,thread_data->track_bbox,thread_data->userId,thread_data->camId,thread_data->sendResultURL,thread_data->direction, thread_data->thread_id, thread_data->num_of_lines, thread_data->deviceName,thread_data->width,thread_data->height,thread_data->tripline_no);
+			draw_detections_tracking(out, demo_detections, demo_thresh, boxes, probs, 0, demo_names, demo_alphabet, demo_classes, src, rtspUrl,thread_data->track_bbox,thread_data->userId,thread_data->camId,thread_data->sendResultURL,thread_data->direction, thread_data->thread_id, thread_data->num_of_lines, thread_data->deviceName,thread_data->width,thread_data->height,thread_data->tripline_no,fileName,curl,headerlist);
 		
 			free_image(out);
 			demo_index = (demo_index + 1)%demo_frame;
@@ -189,7 +215,9 @@ void *display_loop(void *ptr)
     }*/
 }
 
-void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int delay, char *prefix, int avg_frames, float hier, int w, int h, int frames, int fullscreen,int num_of_bboxes,char* bounding_box_params_array[10][2000],int canvas_width, int canvas_height, int img_width, int img_height, char*userId,char*camId,char*sendResultURL, char* _marker[20], char* _tagName[20], char* deviceName)
+void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, 
+char **names, int classes, int delay, char *prefix, int avg_frames, float hier, int w, int h, 
+int frames, int fullscreen,int num_of_bboxes,char* bounding_box_params_array[10][2000],int canvas_width, int canvas_height, int img_width, int img_height, char*userId,char*camId,char*sendResultURL, char* _marker[20], char* _tagName[20], char* deviceName,char *folderPath)
 {
 	//lock = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutex_init(&lock, NULL);
@@ -298,7 +326,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 			thread_data[i].shape=bounding_box_params_array[i][5];
 			thread_data[i].direction=bounding_box_params_array[i][6];
 		
-
+			thread_data[i].folderPath=folderPath;
 			thread_data[i].deviceName = deviceName;
 			thread_data[i].num_of_lines = num_of_bboxes;
 			thread_data[i].tripline_no=i;

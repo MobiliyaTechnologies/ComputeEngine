@@ -18,12 +18,16 @@
 
 #define MAX_THREADS 10
 
+extern sourceImageData globalSourceImageData;
+
 extern tracking_count[3];
 int windows = 0;
 int test_cnt = 1;
+
 int detection_results[5][4];
 char object_array[5][1000];
 int bbox_detection_count[10];
+
 char* marker[10];
 char* tag[10];
 float radius = 0;
@@ -56,6 +60,8 @@ typedef struct
 {
 	char *sendResultURL;
 	char * data;
+    CURL *curl;
+	struct curl_slist *headerlist;
 }sending_thread;
 
 
@@ -312,115 +318,37 @@ float getMin(float reference, float bbox)
 
 }
 
-void * sendTrackingJson(void* data_array)
+void * sendTrackingJson(char* sendDetectionResultUrl, CURL *curl,struct curl_slist *headerlist, char* resultJson)
 {
+    double startSending = what_time_is_it_now();
+    CURLcode res;
 
-	sending_thread *thread_data;
-	thread_data=(sending_thread *)data_array;
-	CURL *curl;
-	CURLcode res;
-	struct curl_slist *headerlist=NULL;
-  	static const char buf[] = "Expect:";
-
-	headerlist = curl_slist_append(headerlist, buf);
-   	headerlist= curl_slist_append(headerlist, "Accept: application/json");
-   	headerlist=curl_slist_append(headerlist, "Content-Type: application/json");
-   	headerlist=curl_slist_append(headerlist, "charsets: utf-8");
-
-  	curl = curl_easy_init();
-	if(curl) {
-    /* upload to this place */ 
-     	curl_easy_setopt(curl, CURLOPT_URL, thread_data->sendResultURL);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    if(curl) 
+    {
+    /* upload to this place */
+        curl_easy_setopt(curl, CURLOPT_URL, sendDetectionResultUrl);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-    	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, thread_data->data);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(thread_data->data));
-		curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, resultJson);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(resultJson));
+        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
 
-		/* enable verbose for easier tracing */ 
-     		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-     		/* tell it to "upload" to the URL */ 
-    		 curl_easy_setopt(curl, CURLOPT_POST, 1L);
- 		 		
-    		res = curl_easy_perform(curl);
-   		long http_code = 0; 
-    		//curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code); 
-    		/* Check for errors */ 
-   		 if(res != CURLE_OK) {
-      			fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
-       			
-		}
-		else {
-      			
-				printf("\n\n Result Sent !\n\n------------------------------------------------------------------------------\n\n");
-    			
-   		 }
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        res = curl_easy_perform(curl);
+
+        long http_code = 0;
+        curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+
+            if(res != CURLE_OK){
+                fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+        }
+        else 
+                printf("Result Sent"); 
+        curl_easy_reset(curl);                
+
 	}
-	
- 	/* always cleanup */ 
- 		if(thread_data){
- 		    if(thread_data){
- 			    free(thread_data->data);
-            }
- 			free(thread_data);
- 		}
-
-    	curl_easy_cleanup(curl);
 }
-
-
-
-void sendJsonTracking(char *json,char* sendDetectionResultUrl)
-{
-	CURL *curl;	
-	CURLcode res;
-	struct curl_slist *headerlist=NULL;
-  	static const char buf[] = "Expect:";
-
-	char userId_string[100];
-	headerlist = curl_slist_append(headerlist, buf);
-   	headerlist= curl_slist_append(headerlist, "Accept: application/json");
-   	headerlist=curl_slist_append(headerlist, "Content-Type: application/json");
-   	headerlist=curl_slist_append(headerlist, "charsets: utf-8");
-
-  	curl = curl_easy_init();
-	if(curl) {
-    /* upload to this place */ 
-     		curl_easy_setopt(curl, CURLOPT_URL, sendDetectionResultUrl);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-    	 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
-          	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(json));
-		curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
-
-		/* enable verbose for easier tracing */ 
-     		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-     		/* tell it to "upload" to the URL */ 
-    		 curl_easy_setopt(curl, CURLOPT_POST, 1L);
-    		res = curl_easy_perform(curl);
-   		long http_code = 0; 
-    		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code); 
-    		/* Check for errors */ 
-   		 if(res != CURLE_OK) {
-      			fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
-       			
-		}
-		else {
-      			
-				printf("\n\n Result Sent !\n\n------------------------------------------------------------------------------\n\n");
-    			
-   		 }
-   		 curl_easy_reset(curl);
-	}
-	
- 	/* always cleanup */ 
-    	//curl_easy_cleanup(curl);
-	
-}
-
-
 
 void* tracking_thread_func(void* data_array)
 {
@@ -471,9 +399,8 @@ void* tracking_thread_func(void* data_array)
 	}
 }
 
-
-
-void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes)
+void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, 
+int classes)
 {
     int i,j;
 
@@ -563,7 +490,7 @@ float boundingbox_overlap(int *rect1  , int *rect2)
 
 
 
-void draw_detections_tracking(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, IplImage* srcImage, char* rtspUrl,float * trip_line, char* userId, char* camId, char* sendResultURL, char* direction,int thread_id,int num_of_lines, char* deviceName,int image_width, int image_height,int tripline_no)    
+void draw_detections_tracking(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, IplImage* srcImage, char* rtspUrl,float * trip_line, char* userId, char* camId, char* sendResultURL, char* direction,int thread_id,int num_of_lines, char* deviceName,int image_width, int image_height,int tripline_no,char *imageName,CURL *curl,struct curl_slist *headerlist)    
 {
 
 	int i,j;
@@ -595,7 +522,7 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
 		                strcat(labelstr, names[j]);
 		            }
 				if (strcmp(names[j], personVar) == 0){
-				   		printf("\n%s: %.0f%%\n", names[j], probs[i][j]*100);
+				   		//printf("\n%s: %.0f%%\n", names[j], probs[i][j]*100);
 					objectFlag = 1;
 
 					}
@@ -662,8 +589,7 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
 					}
 					else if(strcmp(direction, "bottom") == 0)
 					{
-						 mw = abs(trip_line[0]- trip_line[2]);
-		                 //mh = image_height - getMin(trip_line[1], trip_line[3]);
+						mw = abs(trip_line[0]- trip_line[2]);
 						mh = image_height;
 						
 						left  = (b.x-b.w/2.)*im.w;     //x1
@@ -733,7 +659,7 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
 	{
 			int thread_id=-1,rc;
 			float max_overlap=-1;
-			bool track_object=true;
+			int track_object=1;
 			for(j=0;j<MAX_THREADS;j++)
 			{
 				
@@ -745,7 +671,7 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
 				}
 			}
 
-			if(track_object)
+			if(1)
 			{
 				if(max_overlap<0.10)
 				{
@@ -783,7 +709,7 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
 				            exit(-1);
 				    } else {
 				    	//printf("\nCreating thread : %d, %x\n", thread_id, tids[thread_id]);
-				    	printf("\nCreating thread with bounding box : %d,%d ,%d ,%d\n",tracked_bounding_box[thread_id][0],tracked_bounding_box[thread_id][1],tracked_bounding_box[thread_id][2],tracked_bounding_box[thread_id][3]);
+				    	//printf("\nCreating thread with bounding box : %d,%d ,%d ,%d\n",tracked_bounding_box[thread_id][0],tracked_bounding_box[thread_id][1],tracked_bounding_box[thread_id][2],tracked_bounding_box[thread_id][3]);
 				    }
 		        }
 		    }
@@ -791,9 +717,7 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
 	}
 	int temp_count=0;
 	int total_count = 0;
-	char *imageName[50];
-	strcpy(imageName,camId);
-	strcat(imageName,"_tripline");
+
 	json_object *jStringIsTripline = json_object_new_string("1");
 	json_object *boundingBoxes = json_object_new_array();
 	json_object *jStringDeviceName = json_object_new_string(deviceName);
@@ -865,7 +789,6 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
 			json_object *timestamp = json_object_new_string(times);
 
 			json_object *jint = json_object_new_int(total_count);
-			//json_object *timestamp = json_object_new_string(millisecondsSinceEpoch);
 
 			json_object *jStringImageName = json_object_new_string(imageName);	
 			
@@ -881,22 +804,7 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
          		imageToSend = cvCreateImage(cvGetSize(srcImage), srcImage->depth, srcImage->nChannels);
     		}
 			cvCopy(srcImage, imageToSend, NULL);
-			CvMat* mat = cvEncodeImage(".jpg",imageToSend,&params);
-		
-			if (mat->data.ptr == NULL) {
-					printf ("MAT is NULL\n");
-			} else {
 			
-			
-			char* baseEnc = base64simple_encode(mat->data.ptr, mat->cols*mat->rows);
-			char *enc ="data:image/jpg;base64, ";
-			
-			char * finalEnc = (char *) malloc(1 + strlen(baseEnc)+ strlen(enc) );
-			strcpy(finalEnc, enc);
-			strcat(finalEnc, baseEnc);
-		
-			
-			json_object *jStringImageB64 = json_object_new_string(finalEnc);
 			
 			json_object_object_add(jobj_complete_json, "totalCount", jint);
 			
@@ -914,45 +822,21 @@ void draw_detections_tracking(image im, int num, float thresh, box *boxes, float
 			
 			json_object_object_add(jobj_complete_json, "bboxResults", jarray);
 
-			json_object_object_add(jobj_complete_json,"imgBase64", jStringImageB64);
-
 			json_object_object_add(jobj_complete_json, "userId", jStringUserId);
 	
 			
 		   	//printf("\nComplete JSON to be sent : \n %s\n", json_object_to_json_string(jobj_complete_json));
 		   	
-		   	pthread_t id;
+			sendTrackingJson(sendResultURL, curl, headerlist, json_object_to_json_string(jobj_complete_json));
 		
-		if(temp_count||!send_count)
-		{   	
-			sending_thread* send_data = (sending_thread *)malloc(sizeof(sending_thread));
-
-			send_data->sendResultURL=sendResultURL;
-			send_data->data=json_object_to_json_string(jobj_complete_json);
-		
-				pthread_create(&id, NULL, sendTrackingJson, (void *) send_data);		
-			//sendJsonTracking(json_object_to_json_string(jobj_complete_json),sendResultURL);
-			send_count=0;
-		}
-		send_count++;
-		if(send_count==2)
-			send_count=0;
-    		
-free(finalEnc);
-			
-    		cvReleaseMat(&mat);
     		cvReleaseImage(&imageToSend);
-    		free(baseEnc);
     			
-	printf("\nNum of objects detected : %d",iterator);
-	printf("\nCrosssing count %d\n",crossing_count);
+	//printf("\nNum of objects detected : %d",iterator);
+	//printf("\nCrosssing count %d\n",crossing_count);
 
 	cvReleaseImage(&srcImage);
-	}
-			int end1=(int)time(NULL);
-
+	free(jobj_complete_json);
 }
-
 
 int getMinOf3(int num1, int num2, int num3)
 {
@@ -977,53 +861,56 @@ int getMinOf3(int num1, int num2, int num3)
         }	
 }
 
-void draw_detections_heimdall(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, char* imageName, int num_bbox, float final_bounding_boxes[], char *sendDetectionResultUrl, float areaThreshold, /*char aoi[50],*/ char device_name[20], char* shape, char* objectsArray[80], int num_objects, char* direction, int t, char* tagName, char* markerName)
+//Function used to generate result json of respective thread
+void draw_detections_heimdall(image im, int num, float thresh, box *boxes, float **probs, float **masks, 
+char **names, image **alphabet, int classes, char* imageName, int num_bbox, float final_bounding_boxes[], 
+char *sendDetectionResultUrl, float areaThreshold, /*char aoi[50],*/ char device_name[20], char* shape, 
+char* objectsArray[80], int num_objects, char* direction, int threadId, char* tagName, char* markerName)
 {
- 	int left, right, top, bot;
+    bbox_detection_count[threadId] = 0;
 
-	{
-		bbox_detection_count[t] = 0;
-	}
+    int left, right, top, bot;	
     int i,j;
-    char* personVar = "chair";
     int objectFlag = 0;
-    int total_cnt= 0;
     int idx = 0;
-    int num_people = 0;
+    int numberOfDetection = 0; 
+
 	json_object *jarray_bboxes = json_object_new_array();
 	
 	json_object *jobj_complete_json = json_object_new_object();
-	 marker[t] = markerName;
-        tag[t] = tagName;
+	marker[threadId] = markerName;
+    tag[threadId] = tagName;
     
     for(i = 0; i < num; ++i){
         char labelstr[4096] = {0};
         int class = -1;
-	int person_cnt = 1;
-	char* detected_object;
+        char* detected_object;
+        
         for(j = 0; j < classes; ++j){
-            if (probs[i][j] > thresh){
-                if (class < 0) {
-                    strcat(labelstr, names[j]);
-                    class = j;
-                } else {
-                    strcat(labelstr, ", ");
-                    strcat(labelstr, names[j]);
+                if (probs[i][j] > thresh){
+                    if (class < 0) {
+                        strcat(labelstr, names[j]);
+                        class = j;
+                    } else {
+                        strcat(labelstr, ", ");
+                        strcat(labelstr, names[j]);
+                    }
+                for(int b = 0; b < num_objects; b++)
+                {   
+                    //Check if expected objects from object Array are detected
+                    if (strcmp(names[j], objectsArray[b]) == 0){
+                        detected_object = names[j];
+                        objectFlag = 1;
+                    }
                 }
-		for(int b = 0; b < num_objects; b++)
-		{
-			if (strcmp(names[j], objectsArray[b]) == 0){
-                		detected_object = names[j];
-				objectFlag = 1;
-			}
-		}
             }
         }
-	if(objectFlag == 1)
-	{
-        if(class >= 0){
+        //yes detected
+        if(objectFlag == 1)
+        {
+            if(class >= 0)
+            {
             int width = im.h * .006;
-
             int offset = class*123457 % classes;
             float red = get_color(2,offset,classes);
             float green = get_color(1,offset,classes);
@@ -1035,6 +922,7 @@ void draw_detections_heimdall(image im, int num, float thresh, box *boxes, float
             rgb[2] = blue;
             box b = boxes[i];
 
+            //Co-ordinates as per resized image by darknet
             left  = (b.x-b.w/2.)*im.w;
             right = (b.x+b.w/2.)*im.w;
             top   = (b.y-b.h/2.)*im.h;
@@ -1044,128 +932,142 @@ void draw_detections_heimdall(image im, int num, float thresh, box *boxes, float
             if(right > im.w-1) right = im.w-1;
             if(top < 0) top = 0;
             if(bot > im.h-1) bot = im.h-1;
-	bbox_detection_count[t] = bbox_detection_count[t]+1;
-	num_people++;
 
-	int scaled_left;
-	int scaled_top;
-	int scaled_right;
-	int scaled_bot;
-	if(strcmp(shape, "Circle") == 0)
-	{
-		scaled_left = final_bounding_boxes[0] - radius + left;
-		scaled_top = final_bounding_boxes[1] - radius + top;
-		scaled_right = final_bounding_boxes[0] - radius + right;
-		scaled_bot = final_bounding_boxes[1] - radius + bot;
-	}
+            bbox_detection_count[threadId] = bbox_detection_count[threadId]+1;
 
-	if(strcmp(shape, "Rectangle") == 0)
-	{
-		scaled_left = final_bounding_boxes[0] + left;
-		scaled_top = final_bounding_boxes[1] + top;
-		scaled_right = final_bounding_boxes[0] + right;
-		scaled_bot = final_bounding_boxes[1] + bot;
-	}
-	if(strcmp(shape, "Line") == 0)
-	{
-		if(strcmp(direction, "right") == 0)
-		{
-			scaled_left = getMin(final_bounding_boxes[2], final_bounding_boxes[0]) + left;
-			scaled_top = final_bounding_boxes[1] + top;
-			scaled_right = getMin(final_bounding_boxes[2], final_bounding_boxes[0]) + right;
-			scaled_bot = final_bounding_boxes[1] + bot;
-		}
-		else if(strcmp(direction, "top") == 0)
-		{
-			scaled_left = final_bounding_boxes[0] + left;
-			scaled_top = top;
-			scaled_right = final_bounding_boxes[0] + right;
-			scaled_bot = bot;
-		}
-		else if(strcmp(direction, "bottom") == 0)
-		{
-			scaled_left = final_bounding_boxes[0] + left;
-			scaled_top = getMin(final_bounding_boxes[1], final_bounding_boxes[3]) + top;
-			scaled_right = final_bounding_boxes[0] + right;
-			scaled_bot = getMin(final_bounding_boxes[1], final_bounding_boxes[3]) + bot;
-		}
-		else if(strcmp(direction, "left") == 0)
-		{
-			scaled_left = left;
-			scaled_top = final_bounding_boxes[1] + top;
-			scaled_right = right;
-			scaled_bot = final_bounding_boxes[1] + bot;
-		}
+            //Co-ordinates as per AOIs and original image resolution
+            int scaled_left;
+            int scaled_top;
+            int scaled_right;
+            int scaled_bot;
 
-	}
-	if(strcmp(shape, "Triangle") == 0)
-	{
-		scaled_left = final_bounding_boxes[0] + left;
-		scaled_top = getMinOf3(final_bounding_boxes[1], final_bounding_boxes[3], final_bounding_boxes[5]) + top;
-		scaled_right = final_bounding_boxes[0] + right;
-		scaled_bot = getMinOf3(final_bounding_boxes[1], final_bounding_boxes[3], final_bounding_boxes[5]) + bot;
-	}
-	char left_string[100];
-	char top_string[100];
-	char right_string[100];
-	char bot_string[100];
-	
+            char left_string[100];
+            char top_string[100];
+            char right_string[100];
+            char bot_string[100];
 
-	sprintf(left_string, "%d", scaled_left);
-	sprintf(top_string, "%d", scaled_top);
-	sprintf(right_string, "%d", scaled_right);
-	sprintf(bot_string, "%d", scaled_bot);
+            if(strcmp(shape, "Circle") == 0)
+            {
+                scaled_left = final_bounding_boxes[0] - radius + left;
+                scaled_top = final_bounding_boxes[1] - radius + top;
+                scaled_right = final_bounding_boxes[0] - radius + right;
+                scaled_bot = final_bounding_boxes[1] - radius + bot;
+            }
 
-	json_object *jobj_bbox = json_object_new_object();
-	json_object *jobj_bboxes = json_object_new_object();
+            if(strcmp(shape, "Rectangle") == 0)
+            {
+                scaled_left = final_bounding_boxes[0] + left;
+                scaled_top = final_bounding_boxes[1] + top;
+                scaled_right = final_bounding_boxes[0] + right;
+                scaled_bot = final_bounding_boxes[1] + bot;
+            }
+            if(strcmp(shape, "Line") == 0)
+            {
+                if(strcmp(direction, "right") == 0)
+                {
+                    scaled_left = getMin(final_bounding_boxes[2], final_bounding_boxes[0]) + left;
+                    scaled_top = final_bounding_boxes[1] + top;
+                    scaled_right = getMin(final_bounding_boxes[2], final_bounding_boxes[0]) + right;
+                    scaled_bot = final_bounding_boxes[1] + bot;
+                }
+                else if(strcmp(direction, "top") == 0)
+                {
+                    scaled_left = final_bounding_boxes[0] + left;
+                    scaled_top = top;
+                    scaled_right = final_bounding_boxes[0] + right;
+                    scaled_bot = bot;
+                }
+                else if(strcmp(direction, "bottom") == 0)
+                {
+                    scaled_left = final_bounding_boxes[0] + left;
+                    scaled_top = getMin(final_bounding_boxes[1], final_bounding_boxes[3]) + top;
+                    scaled_right = final_bounding_boxes[0] + right;
+                    scaled_bot = getMin(final_bounding_boxes[1], final_bounding_boxes[3]) + bot;
+                }
+                else if(strcmp(direction, "left") == 0)
+                {
+                    scaled_left = left;
+                    scaled_top = final_bounding_boxes[1] + top;
+                    scaled_right = right;
+                    scaled_bot = final_bounding_boxes[1] + bot;
+                }
+            }
+            if(strcmp(shape, "Triangle") == 0)
+            {
+                scaled_left = final_bounding_boxes[0] + left;
+                scaled_top = getMinOf3(final_bounding_boxes[1], final_bounding_boxes[3], final_bounding_boxes[5]) + top;
+                scaled_right = final_bounding_boxes[0] + right;
+                scaled_bot = getMinOf3(final_bounding_boxes[1], final_bounding_boxes[3], final_bounding_boxes[5]) + bot;
+            }
+            
+            //Final Co-ordinates - top_string, scaled_top, scaled_right, scaled_bot
+            //Write these two sourceImageData structure : detectedBoxes
+            /*globalSourceImageData.detectedBoxes[threadId][numberOfDetection][0] = scaled_left;
+            globalSourceImageData.detectedBoxes[threadId][numberOfDetection][1] = scaled_top;
+            globalSourceImageData.detectedBoxes[threadId][numberOfDetection][2] = scaled_right;
+            globalSourceImageData.detectedBoxes[threadId][numberOfDetection][3] = scaled_bot;
+            globalSourceImageData.detectedBoxes[threadId][numberOfDetection][4] = red;
+            globalSourceImageData.detectedBoxes[threadId][numberOfDetection][5] = green;
+            globalSourceImageData.detectedBoxes[threadId][numberOfDetection][6] = blue;
+            globalSourceImageData.detectedBoxes[threadId][numberOfDetection][7] = width;
+            globalSourceImageData.numberOfDetectionPerBBox[threadId] = globalSourceImageData.numberOfDetectionPerBBox[threadId] + 1;
+            */
+            sprintf(left_string, "%d", scaled_left);
+            sprintf(top_string, "%d", scaled_top);
+            sprintf(right_string, "%d", scaled_right);
+            sprintf(bot_string, "%d", scaled_bot);
 
-	json_object *jStringX1 = json_object_new_string(left_string);
-	json_object *jStringY1 = json_object_new_string(top_string);
-	json_object *jStringX2 = json_object_new_string(right_string);
-	json_object *jStringY2 = json_object_new_string(bot_string);
+            //Json Creation of thread result
+            json_object *jobj_bbox = json_object_new_object();
+            json_object *jobj_bboxes = json_object_new_object();
 
-	json_object *jStringtag = json_object_new_string(tag[t]);
-	json_object *jStringMarker = json_object_new_string(marker[t]);	
+            json_object *jStringX1 = json_object_new_string(left_string);
+            json_object *jStringY1 = json_object_new_string(top_string);
+            json_object *jStringX2 = json_object_new_string(right_string);
+            json_object *jStringY2 = json_object_new_string(bot_string);
 
-	json_object_object_add(jobj_bbox, "x1", jStringX1);
-	json_object_object_add(jobj_bbox, "y1", jStringY1);
-	json_object_object_add(jobj_bbox, "x2", jStringX2);
-	json_object_object_add(jobj_bbox, "y2", jStringY2);	
+            json_object *jStringtag = json_object_new_string(tag[threadId]);
+            json_object *jStringMarker = json_object_new_string(marker[threadId]);	
 
-	json_object *jStringDetectedObject = json_object_new_string(detected_object);
-	json_object_object_add(jobj_bboxes, "objectType", jStringDetectedObject);
-	json_object_object_add(jobj_bboxes, "bboxes", jobj_bbox);
-	json_object_object_add(jobj_bboxes, "tagName", jStringtag);
-	json_object_object_add(jobj_bboxes, "markerName", jStringMarker);
+            json_object_object_add(jobj_bbox, "x1", jStringX1);
+            json_object_object_add(jobj_bbox, "y1", jStringY1);
+            json_object_object_add(jobj_bbox, "x2", jStringX2);
+            json_object_object_add(jobj_bbox, "y2", jStringY2);	
 
-	json_object_array_add(jarray_bboxes,jobj_bboxes);
+            json_object *jStringDetectedObject = json_object_new_string(detected_object);
+            json_object_object_add(jobj_bboxes, "objectType", jStringDetectedObject);
+            json_object_object_add(jobj_bboxes, "bboxes", jobj_bbox);
+            json_object_object_add(jobj_bboxes, "tagName", jStringtag);
+            json_object_object_add(jobj_bboxes, "markerName", jStringMarker);
 
-//If required, for saving detection image
+            json_object_array_add(jarray_bboxes,jobj_bboxes);
 
-            draw_box_width(im, left, top, right, bot, width, red, green, blue);
+            //If required, for saving detection image - this will save cropped image
+            /*draw_box_width(im, left, top, right, bot, width, red, green, blue);
             if (alphabet) {
                 image label = get_label(alphabet, labelstr, (im.h*.03)/10);
                 draw_label(im, top + width, left, label, rgb);
                 free_image(label);
-            }
+            }*/
+            /*    
             if (masks){
-                image mask = float_to_image(14, 14, 1, masks[i]);
-                image resized_mask = resize_image(mask, b.w*im.w, b.h*im.h);
-                image tmask = threshold_image(resized_mask, .5);
-                embed_image(tmask, im, left, top);
-                free_image(mask);
-                free_image(resized_mask);
-                free_image(tmask);
-            }
-	    objectFlag = 0;
-        }
+                    image mask = float_to_image(14, 14, 1, masks[i]);
+                    image resized_mask = resize_image(mask, b.w*im.w, b.h*im.h);
+                    image tmask = threshold_image(resized_mask, .5);
+                    embed_image(tmask, im, left, top);
+                    free_image(mask);
+                    free_image(resized_mask);
+                    free_image(tmask);
+                }
+            */
+            objectFlag = 0;
+            }// if(class >= 0)
+            numberOfDetection++;
+        }//if objectFlag
+	}//for num_boxes
 
-	total_cnt++;
-		
-    }
-	}
-	strcpy(object_array[t], json_object_to_json_string(jarray_bboxes));
-
+    //Final result of bounding Boxes
+	strcpy(object_array[threadId], json_object_to_json_string(jarray_bboxes));
 }
 
 void transpose_image(image im)
@@ -1845,19 +1747,34 @@ image get_image_from_stream(CvCapture *cap)
 
 int fill_image_from_stream(CvCapture *cap, image im)
 {
-	
-           // printf("HRI : Trying to lock %s, %d\n", __func__, __LINE__);
     pthread_mutex_lock(&lock);	
-            //printf("HRI : Locked %s, %d\n", __func__, __LINE__);
+            
     for (int i = 0;i < 2;i++) {
     	globalSrc = cvQueryFrame(cap);
     }
     if (!globalSrc) return 0;
     ipl_into_image(globalSrc, im);
 	pthread_mutex_unlock(&lock);	
-           // printf("HRI : Unlocked %s, %d\n", __func__, __LINE__);
+           
     rgbgr_image(im);
     
+    return 1;
+}
+//Function to read images
+int fill_image_from_streamDemo(CvCapture *cap, int fps)
+{         
+    IplImage* src;
+    for (int i = 1;i < fps;i++) {
+    	src = cvQueryFrame(cap);
+    }
+    // printf("\nGot the lock to write image to global source image");
+    globalSourceImageData.globalSource = cvQueryFrame(cap);
+    if (!globalSourceImageData.globalSource) 
+    {   
+        printf("\nERROR** ---> Couldn't read image from streaming source"); 
+        return 0;
+    }
+    // printf("\nReleased lock to global source image");
     return 1;
 }
 
@@ -1867,7 +1784,7 @@ void save_image_jpg(image p, const char *name)
     if(p.c == 3) rgbgr_image(copy);
     int x,y,k;
 
-    char buff[256];
+    char buff[3000];
     sprintf(buff, "%s.jpg", name);
 
     IplImage *disp = cvCreateImage(cvSize(p.w,p.h), IPL_DEPTH_8U, p.c);
@@ -1879,7 +1796,12 @@ void save_image_jpg(image p, const char *name)
             }
         }
     }
-    cvSaveImage(buff, disp,0);
+    int parameters[3];
+    parameters[0] = CV_IMWRITE_JPEG_QUALITY;
+    parameters[1] = 20;
+    parameters[2] = 0;
+
+    cvSaveImage(buff, disp,parameters);
     cvReleaseImage(&disp);
     free_image(copy);
 }
@@ -2827,3 +2749,4 @@ void free_image(image m)
         free(m.data);
     }
 }
+

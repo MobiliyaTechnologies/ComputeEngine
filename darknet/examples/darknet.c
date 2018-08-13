@@ -13,9 +13,9 @@ extern void predict_classifier(char *datacfg, char *cfgfile, char *weightfile, c
 //extern void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen);
 extern void test_detector(char *datacfg, char *cfgfile, char *weightfile, float thresh, float hier_thresh, char *outfile);
 //extern void test_detector_heimdall(char *datacfg, char *cfgfile, char *weightfile, float thresh, float hier_thresh, char *sendResultURL, char *stopProcessingDetectnetDL, int num_bbox, char bounding_box_params_array[][100][100], char dimensionArray[2][5], char *outfile, char *userId, char* folderPath, char* width, char* height);
-extern void test_detector_heimdall(char *_datacfg, char *cfgfile, char *weightfile, float _thresh, float _hier_thresh, char *_sendResultURL, char folderPath[1000], int _num_bbox, char* bounding_box_params_array[10][2000], int canvas_width, int canvas_height, char* _userId, char* img_width, char* img_height, char* _deviceName, char* camID, char* objectArray[10][80], int num_objects, char* feature, char* tagNameArray[10], char*  markerNameArray[10]);
+extern void test_detector_heimdall(char *_datacfg, char *cfgfile, char *weightfile, float _thresh, float _hier_thresh, char *_sendResultURL, char folderPath[3000], int _num_bbox, char* bounding_box_params_array[10][2000], int canvas_width, int canvas_height, char* _userId, char* img_width, char* img_height, char* _deviceName, char* camID, char* objectArray[10][80], int num_objects, char* feature, char* tagNameArray[10], char*  markerNameArray[10], char* streamingUrl);
 extern void run_yolo(int argc, char **argv);
-extern void run_detector(int num_of_bboxes,char* bounding_box_params_array[10][6],  char* canvas_width, char* canvas_height,char * img_width,char * img_height, char*,char*,char*,char*, char* ,char*, char *);
+extern void run_detector(int num_of_bboxes,char* bounding_box_params_array[10][6],  char* canvas_width, char* canvas_height,char * img_width,char * img_height, char*,char*,char*,char*, char* ,char*, char *,char *folderPath);
 extern void run_coco(int argc, char **argv);
 extern void run_captcha(int argc, char **argv);
 extern void run_nightmare(int argc, char **argv);
@@ -468,7 +468,11 @@ printf("\nargv 5 = %s\n", argv[5]);
 	json_object* jobj_canvas_height = json_object_object_get(jobj_canvas_params, "height");
 	int canvas_width = json_object_get_int(jobj_canvas_width);
 	int canvas_height = json_object_get_int(jobj_canvas_height);
-
+	
+	char* deviceType = json_object_get_string(json_object_object_get(jobj, "deviceType"));
+	printf("\n\nDeviceType %s", deviceType);
+	
+	
 	json_object* jobj_image_height = json_object_object_get(jobj, "imageHeight");
 	json_object* jobj_image_width = json_object_object_get(jobj, "imageWidth");
 	json_object* jobj_feature = json_object_object_get(jobj, "feature");
@@ -496,6 +500,15 @@ printf("\nargv 5 = %s\n", argv[5]);
 	int num_bbox = arraylen;
 	printf("\nNumber of bounding boxes = %d\n", num_bbox);
 	char* bounding_box_params_array[num_bbox][2000];
+	
+	//If IP Camera
+	char streamingURL[1000];
+    if(strcmp(deviceType,"IP") == 0){
+	    sprintf(streamingURL , "uridecodebin uri=%s  ! videoconvert ! videoscale ! appsink", streamingUrl);
+    }else{
+        sprintf(streamingURL , "%s", streamingUrl);
+    }
+    printf("streamingURL --->%s ", streamingURL);
 	for (int i = 0; i < arraylen; i++)
 	{
 		json_object* bbox_object = json_object_array_get_idx(jobj_bounding_boxes_array, i);
@@ -511,6 +524,7 @@ printf("\nargv 5 = %s\n", argv[5]);
 			bounding_box_params_array[i][3] = json_object_get_string(json_object_object_get(bbox_object, "y2"));
 
 			bounding_box_params_array[i][5] = bbox_shape;
+			printf("\n\nShape=======================>%s",bbox_shape);
 
 		}
 		else if(strcmp(bbox_shape, "Circle") == 0)
@@ -575,8 +589,8 @@ printf("\nargv 5 = %s\n", argv[5]);
 
 if (strcmp(argv[1], "detect") == 0){
 
-	test_detector_heimdall("cfg/coco.data", darknet_params[0], darknet_params[1], atof(darknet_params[2]), atof(darknet_params[3]), resultUrl, 	folderPath, num_bbox, bounding_box_params_array, canvas_width, canvas_height, userId, image_width, image_height, deviceName, camID, objectArray, num_objects, feature, tagNameArray, markerNameArray);
-
+	test_detector_heimdall("cfg/coco.data", darknet_params[0], darknet_params[1], atof(darknet_params[2]), atof(darknet_params[3]), resultUrl, 	folderPath, num_bbox, bounding_box_params_array, canvas_width, canvas_height, userId, image_width, image_height, deviceName, camID, objectArray, num_objects, feature, tagNameArray, markerNameArray,
+    streamingURL);
 }
 
 	else if (0 == strcmp(argv[1], "average")){
@@ -588,7 +602,7 @@ if (strcmp(argv[1], "detect") == 0){
     } else if (0 == strcmp(argv[1], "lsd")){
         run_lsd(argc, argv);
     } else if (0 == strcmp(argv[1], "detector")){
-        run_detector(arraylen,bounding_box_params_array, canvas_width, canvas_height,image_width, image_height,streamingUrl, userId, camID, resultUrl, markerNameArray, tagNameArray, deviceName);
+        run_detector(arraylen,bounding_box_params_array, canvas_width, canvas_height,image_width, image_height,streamingUrl, userId, camID, resultUrl, markerNameArray, tagNameArray, deviceName,folderPath);
     } else if (0 == strcmp(argv[1], " detect")){
 
 	char* darknet_params;

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <json/json.h>
-
+#include <curl/curl.h>
 
 #define SECRET_NUM -1234
 extern int gpu_index;
@@ -64,6 +64,14 @@ typedef struct{
     int *group_size;
     int *group_offset;
 } tree;
+
+typedef struct 
+{
+    IplImage* globalSource;
+    //IplImage* localCopySourceTwo;
+    // int numberOfDetectionPerBBox[10];
+    // int detectedBoxes[10][7][20];
+}sourceImageData;
 
 typedef enum{
     LOGISTIC, RELU, RELIE, LINEAR, RAMP, TANH, PLSE, LEAKY, ELU, LOGGY, STAIR, HARDTAN, LHTAN
@@ -656,7 +664,7 @@ void rescale_weights(layer l, float scale, float trans);
 void rgbgr_weights(layer l);
 image *get_weights(layer l);
 
-void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int frame_skip, char *prefix, int avg, float hier_thresh, int w, int h, int fps, int fullscreen,int num_of_bboxes,char* bounding_box_params_array[10][2000],int canvas_width, int canvas_height,int img_width, int img_height,char*,char*,char*, char* marker[20], char* tagName[20], char * deviceName);
+void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int frame_skip, char *prefix, int avg, float hier_thresh, int w, int h, int fps, int fullscreen,int num_of_bboxes,char* bounding_box_params_array[10][2000],int canvas_width, int canvas_height,int img_width, int img_height,char*,char*,char*, char* marker[20], char* tagName[20], char * deviceName,char *folderPath);
 void get_detection_boxes(layer l, int w, int h, float thresh, float **probs, box *boxes, int only_objectness);
 
 char *option_find_str(list *l, char *key, char *def);
@@ -720,7 +728,7 @@ data load_all_cifar10();
 box_label *read_boxes(char *filename, int *n);
 box float_to_box(float *f, int stride);
 void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes);
-void draw_detections_tracking(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, IplImage* srcTracking, char* rtspURL, float * tripline,char*,char*,char*, char *,int, int,char *,int ,int,int);
+void draw_detections_tracking(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, IplImage* srcTracking, char* rtspURL, float * tripline,char*,char*,char*, char *,int, int,char *,int ,int,int,char *imageName,CURL *curl,struct curl_slist *headerlist);
 void draw_detections_heimdall(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes,char* imageName, int num_bbox, float final_bounding_boxes[6], char *sendResultURL, float areaThreshold /*,char aoi[50]*/, char device_name[200], char* shape, char* objectsArray[80], int num_objects, char* direction, int t, char* tagName, char* markerName);
 void sendJson(char *json,char* sendDetectionResultUrl);
 matrix network_predict_data(network *net, data test);
@@ -787,3 +795,4 @@ float rand_normal();
 //IplImage* getIplImage();
 
 #endif
+

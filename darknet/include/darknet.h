@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-#include <json/json.h>
+#include <json-c/json.h>
 #include <curl/curl.h>
 
 #define SECRET_NUM -1234

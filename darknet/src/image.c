@@ -5,7 +5,7 @@
 #include "cuda.h"
 #include <stdio.h>
 #include <math.h>
-#include <json/json.h>
+#include <json-c/json.h>
 #include <curl/curl.h>
 #include <stdlib.h>
 #include <string.h>

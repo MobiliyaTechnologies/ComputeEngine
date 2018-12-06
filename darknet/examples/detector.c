@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
-#include <json/json.h>
+#include <json-c/json.h>
 #include "image.h"
 #include <curl/curl.h>
 #include <stdlib.h>

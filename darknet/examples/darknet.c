@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <json/json.h>
+#include <json-c/json.h>
 int num;
 
 max_bbox = 5;
